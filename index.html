@@ -1618,7 +1618,8 @@ put("#n-home","compass","גילוי");put("#n-chats","chat","צ׳אטים");put(
 $("#n-chats").append(Object.assign(el("span","badge"),{hidden:true}));
 put("#back","back");put("#send-b","send",null,20);put("#bsend-b","send",null,20);put("#d-x","x");put("#s-x","back");put("#s-ic","search",null,20);put("#b-x","x");put("#m-x","x");$("#b-av").innerHTML=svg("spark");
 chips();paint();buildReels();markAll();
-{const saved=loadUser();if(saved){user=saved;applyUser()}else{$("#gate").hidden=false;gshow("g-land",false)}}
+/* demo mode: every open starts at the landing page so the whole sign-up or login can be shown; registered accounts stay saved for login */
+try{localStorage.removeItem(LS)}catch(_){}$("#gate").hidden=false;gshow("g-land",false);
 </script>
 </body>
 </html>
