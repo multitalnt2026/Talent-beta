@@ -7,7 +7,8 @@ Talent is a Hebrew (RTL) marketplace app prototype in a single file, `index.html
 - Workspace (the owner's home for the project): https://claude.ai/artifact/9Gs5fhgSFLphixd31ZoY1H
   - Its database has `ideas` (the ideas chat, plus work conversations) and `app` (`current` = approved app version, `pending` = waiting for approval, `previous`).
 - App pages: each version is its own artifact, so the approved one never changes under the owner.
-  - Approved (as of 21.11.2026): https://claude.ai/artifact/KyPhBFZcPWFohzmJa9fDmL (version 3). Never republish an approved version's URL.
+  - Approved (as of 21.11.2026): https://claude.ai/artifact/Vu4c21krzPXQiRQDMwsQff (version 5). Never republish an approved version's URL.
+  - Earlier: version 3 https://claude.ai/artifact/KyPhBFZcPWFohzmJa9fDmL, version 4 https://claude.ai/artifact/8Cn8tfUuX4xza3pnPX8m3B (superseded by 5).
   - A new version: copy `index.html` to a new path in the scratchpad (e.g. `versions/v5/index.html`) and publish it as a NEW artifact with `capabilities: {downloads: true}`; that URL goes into `app/pending`.
 - Presentation doc (Claude Docs): https://claude.ai/artifact/Y1dY32SyxKXpLLzhjkU2XB
 
