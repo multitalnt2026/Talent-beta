@@ -2,25 +2,40 @@
 
 Talent is a Hebrew (RTL) marketplace app prototype in a single file, `index.html`. Two user types: talents (כישרונות) offer services; scouts (סקאוטים) browse, like, save and book.
 
-## Where things live
+## How the owner works
 
-- Workspace (the owner's home for the project): https://claude.ai/artifact/9Gs5fhgSFLphixd31ZoY1H
-  - The page was rebuilt (21.11.2026) and reads these collections:
-    - `versions/vN`: `n`, `title`, `summary`, `url`, `status` (`pending` | `approved` | `changes`), `ts`, `approvedTs`, `ideas`, `processed`, `docUpdated`, `github`. The orange button opens the approved version with the highest `n`; the history sheet lists them all.
-    - `turns`: the work conversation (`role` me/claude, `text`, `ts`, `status`, `steps`, `source`). Messages typed in the workspace arrive with `status: "queued"`.
-    - `decisions`: open choices with two options (`q`, `ctx`, `a`, `b`, `status` open/answered, `choice`, `note`).
-    - `ideas` (ideas chat; older work logs as `chat`/`sep` entries), `state/live` (what Claude is doing now).
-    - `app/*` is the old format and is no longer read by the page.
-- App pages: each version is its own artifact, so the approved one never changes under the owner.
-  - Approved (as of 21.11.2026): https://claude.ai/artifact/Vu4c21krzPXQiRQDMwsQff (version 5). Never republish an approved version's URL.
-  - Earlier: version 3 https://claude.ai/artifact/KyPhBFZcPWFohzmJa9fDmL, version 4 https://claude.ai/artifact/8Cn8tfUuX4xza3pnPX8m3B (superseded by 5).
-  - A new version: copy `index.html` to a new path in the scratchpad (e.g. `versions/v5/index.html`) and publish it as a NEW artifact with `capabilities: {downloads: true}`; that URL goes into a new `versions/vN` doc with `status: "pending"`.
+- **The build happens in the Claude chat** (the owner's saved project chat). That is the only conversation.
+- **The workspace is a status board, not a second chat:** https://claude.ai/artifact/9Gs5fhgSFLphixd31ZoY1H
+  - "App" tab: what is approved now, the changes in progress since the last approved version, and an approve button.
+  - The orange "enter app" button opens the approved version with the highest `n`.
+  - "Ideas" tab: the owner's idea notebook.
 - Presentation doc (Claude Docs): https://claude.ai/artifact/Y1dY32SyxKXpLLzhjkU2XB
+
+## Workspace database (what the page reads)
+
+- `state/draft`: changes in progress, not approved yet. `{title, changes: [..], summary, url, github, overview: [{h, items: [..]}], updatedTs}`.
+  `changes` = short Hebrew lines describing what differs from the last approved version. `overview` = the whole product as it will be once approved.
+- `state/product`: overview of the approved product `{n, overview, updatedTs}`. The page copies it from the draft on approval.
+- `versions/vN`: `{n, title, summary, changes, url, github, status: "approved", ts, approvedTs, processed, docUpdated, ideas}`. History; never edit an approved version's `url`.
+- `ideas`: the notebook. `state/live`: optional "Claude is working on…" banner (`active`, `title`, `steps`).
+- No longer shown by the page: `turns`, `decisions`, `app/*`, `chat`/`sep` entries in `ideas`. Don't write them.
+
+## Each round
+
+1. At the start, read `versions` for an approval with `processed: false`. If found: set `processed: true`, record the version in this file, and start the next draft on a NEW artifact.
+2. Make the code change in `index.html`, test it, commit and push to `claude/map-tab-modern-ui-omcquc`.
+3. Publish the draft: copy `index.html` to `versions/vN/index.html` in the scratchpad (N = next version) and publish with `capabilities: {downloads: true}`. While a draft is unapproved, republish to the same draft path (same URL). Never republish an approved version's URL.
+4. Write `state/draft` with the cumulative `changes` since the last approved version, the draft `url`, and the full `overview`.
+5. Presentation doc: suggestions only (suggestion mode), so nothing replaces approved text until the owner accepts it.
+6. If the owner approves in chat instead of the button: write `versions/vN` (approved, `processed: true`), copy `overview` to `state/product`, delete `state/draft`.
 
 ## Rules from the owner
 
-1. **Don't guess.** When a request can be read more than one way, send two options and let the owner pick. If neither fits, they correct that topic.
-2. **App versions need approval.** After code changes: commit and push, publish the new version as its own artifact, then write `versions/vN` with `status: "pending"`. The owner approves (or asks for changes) with the buttons in the workspace, or in chat. Only set `status: "approved"` yourself when the owner says the version is approved. After acting on an approval or change request, set `processed: true`.
-3. **Presentation doc changes are suggestions.** At the end of every round, update the doc with suggested edits only (suggestion mode), so nothing replaces the approved text until the owner accepts it.
-4. **Log every work round in the workspace.** Append the conversation to `turns`: the owner's message verbatim (`role: "me"`), then a short summary of the reply (`role: "claude"`, with `steps`). Check `turns` for `queued` messages and `decisions` for answered ones at the start of every round.
-5. Keep the base look: teal brand, coral CTA, Rubik font, light and dark themes.
+1. **Don't guess.** When a request can be read more than one way, send two options in the chat and let the owner pick. If neither fits, they correct that topic.
+2. Nothing replaces the approved app version or approved doc text until the owner approves it.
+3. Keep the base look: teal brand, coral CTA, Rubik font, light and dark themes.
+
+## Versions so far
+
+- v1 https://claude.ai/artifact/4izUUqA3zdZSienS9thcn4 · v3 https://claude.ai/artifact/KyPhBFZcPWFohzmJa9fDmL · v4 https://claude.ai/artifact/8Cn8tfUuX4xza3pnPX8m3B
+- v5 (approved, current) https://claude.ai/artifact/Vu4c21krzPXQiRQDMwsQff · next draft = v6
