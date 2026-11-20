@@ -211,7 +211,7 @@ dialog.sheet{margin:auto auto 0;border-radius:1.8rem 1.8rem 0 0;max-height:92dvh
 dialog.full{margin:0 auto;height:100dvh;max-height:100dvh;border-radius:0;background:var(--paper)}
 @media (prefers-reduced-motion:no-preference){dialog.sheet[open]{animation:up .28s cubic-bezier(.2,.8,.2,1)}dialog.full[open]{animation:fade .2s ease-out}@keyframes up{from{transform:translateY(40px);opacity:.4}}@keyframes fade{from{opacity:0;transform:scale(.98)}}
   .m,.offer,.bcard{animation:in .22s ease-out}@keyframes in{from{opacity:0;transform:translateY(6px)}}}
-.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:.6rem auto .2rem;flex:none}
+.grab{cursor:grab;width:40px;height:5px;border-radius:3px;background:var(--line);margin:.6rem auto .2rem;flex:none}
 .sbody{flex:1;overflow-y:auto;padding:0 1.25rem 1.25rem}
 .shead{display:flex;align-items:center;gap:.6rem;padding:.4rem 1rem .6rem}
 .shead .tx{flex:1}.shead b{display:block;line-height:1.2}.shead small{color:var(--muted)}
@@ -1394,10 +1394,14 @@ function showFrame(){const g=sgList[sv.gi];if(!g){$("#stv").close();return}const
   if(g.own){const v=el("div","views");v.innerHTML=svg("user",22);v.append((f.v||[12,31,47][sv.fi%3])+" צפיות · נעלם בעוד 24 שעות");ft.append(v)}
   else{const i=el("input");i.placeholder="שלחו הודעה ל"+fnm(x)+"…";i.setAttribute("aria-label","תגובה לסטורי");i.onfocus=()=>{d.classList.add("paused");clearTimeout(sv.tm)};i.onblur=()=>{if(!i.value)resume()};
     const h=el("button","ic");h.type="button";h.innerHTML=svg("heart");h.dataset.like=x.i;h.setAttribute("aria-pressed",liked.has(x));h.setAttribute("aria-label","אהבתי");h.onclick=()=>like(x);
-    const more=el("button","btn mini","לפרטים");more.type="button";more.onclick=()=>{d.close();openDet(x)};ft.append(i,h,more);
+    const more=el("button","btn mini","לפרטים");more.type="button";more.onclick=()=>{pauseStory();sv.det=true;openDet(x)};ft.append(i,h,more);
     ft.onsubmit=e=>{e.preventDefault();const s=i.value.trim();if(!s)return;d.close();openChat(x,{silent:true});say("↩︎ על הסטורי „"+(f.c||"")+"”: "+s)}}
   resume()}
-function resume(){const d=$("#stv");d.classList.remove("paused");clearTimeout(sv.tm);const c=d.querySelector(".ssegs i.cur b");if(c){c.style.animation="none";c.offsetWidth;c.style.animation=""}sv.tm=setTimeout(nextFrame,5000)}
+/* pause keeps the progress; continueStory picks up where it stopped (used when details close over a story) */
+function pauseStory(){const d=$("#stv");if(d.classList.contains("paused"))return;d.classList.add("paused");clearTimeout(sv.tm);sv.left=Math.max(300,5000-(Date.now()-sv.at))}
+function continueStory(){const d=$("#stv");d.classList.remove("paused");clearTimeout(sv.tm);const left=sv.left||5000;sv.at=Date.now()-(5000-left);sv.tm=setTimeout(nextFrame,left)}
+$("#det").addEventListener("close",()=>{if(sv.det){sv.det=false;if($("#stv").open)continueStory()}});
+function resume(){const d=$("#stv");d.classList.remove("paused");clearTimeout(sv.tm);sv.at=Date.now();sv.left=0;const c=d.querySelector(".ssegs i.cur b");if(c){c.style.animation="none";c.offsetWidth;c.style.animation=""}sv.tm=setTimeout(nextFrame,5000)}
 function nextFrame(){const g=sgList[sv.gi];if(!g)return;sv.fi++;if(sv.fi>=g.f.length){g.seen=true;sv.gi++;sv.fi=0}showFrame()}
 function prevFrame(){if(sv.fi>0)sv.fi--;else if(sv.gi>0){sv.gi--;sv.fi=0}showFrame()}
 $("#sv-next").onclick=nextFrame;$("#sv-prev").onclick=prevFrame;$("#sv-x").onclick=()=>$("#stv").close();
@@ -1608,6 +1612,25 @@ $("#f-m").onchange=e=>{files=[...e.target.files].slice(0,4);const t=$("#thumbs")
 $("#pf").onsubmit=e=>{e.preventDefault();const t=$("#f-t").value.trim(),p=+$("#f-p").value;if(!files.length||!t||!p){toast("חסרים תמונה, תיאור או מחיר");return}
   const f=files[0];ownSrc=URL.createObjectURL(f);ownVid=f.type.startsWith("video");
   reg.item={t,p,u:$("#f-u").value,c:$("#f-c").value,loc:$("#f-l").value,f:$("#f-f").value,day:$("#dayw").hidden?"":$("#f-y").value,d:$("#f-d").value.trim()||t+"."};dlg.close();finish()};
+
+/* ---------- swipe down to close every bottom sheet ---------- */
+function sheetSwipe(d){let y0=0,dy=0,on=false,drag=false,t0=0;
+  const skip=t=>t.closest("input,textarea,select,.mrow,.rail,.chips,.quick,.socials,.ment,.emo,.seg2");
+  const scroller=t=>{for(let n=t;n&&n!==d;n=n.parentElement){const o=getComputedStyle(n).overflowY;if((o==="auto"||o==="scroll")&&n.scrollHeight>n.clientHeight+1)return n}return null};
+  const start=(y,t)=>{if(skip(t))return;const sc=scroller(t);if(sc&&sc.scrollTop>0)return;on=true;drag=false;y0=y;dy=0;t0=Date.now()};
+  const move=(y,ev)=>{if(!on)return;dy=y-y0;if(!drag){if(dy>8){drag=true;d.style.transition="none"}else{if(dy<-4)on=false;return}}
+    if(ev&&ev.cancelable)ev.preventDefault();d.style.transform="translateY("+Math.max(0,dy)+"px)"};
+  const end=()=>{if(!on)return;on=false;if(!drag)return;setTimeout(()=>drag=false,60);const v=dy/Math.max(1,Date.now()-t0);d.style.transition="transform .22s ease";
+    if(dy>110||(dy>30&&v>.6)){d.style.transform="translateY(100%)";setTimeout(()=>{d.close();d.style.transition="";d.style.transform=""},210)}
+    else{d.style.transform="";setTimeout(()=>{d.style.transition=""},240)}};
+  d.addEventListener("touchstart",e=>start(e.touches[0].clientY,e.target),{passive:true});
+  d.addEventListener("touchmove",e=>move(e.touches[0].clientY,e),{passive:false});
+  d.addEventListener("touchend",end);d.addEventListener("touchcancel",end);
+  d.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button===0)start(e.clientY,e.target)});
+  window.addEventListener("pointermove",e=>{if(e.pointerType==="mouse")move(e.clientY)});
+  window.addEventListener("pointerup",e=>{if(e.pointerType==="mouse")end()});
+  d.addEventListener("click",e=>{if(drag){e.stopPropagation();e.preventDefault()}},true)}
+document.querySelectorAll("dialog.sheet").forEach(sheetSwipe);
 
 /* ---------- light dismiss for sheets ---------- */
 document.querySelectorAll("dialog.sheet").forEach(d=>d.addEventListener("click",e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientY<r.top||e.clientY>r.bottom||e.clientX<r.left||e.clientX>r.right)d.close()}}));
