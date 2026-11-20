@@ -1314,6 +1314,8 @@ async function makeStory(x){await document.fonts.ready;const W=1080,Hh=1920,c=do
 async function storyFor(x,net){const box=$("#story");box.replaceChildren(el("p","","מכינים כרטיס סטורי…"));const blob=await makeStory(x),url=URL.createObjectURL(blob),file=new File([blob],"talent-"+(x.h||"story")+".png",{type:"image/png"});
   const im=el("img");im.src=url;im.alt="כרטיס סטורי של "+x.t+" לשיתוף ב"+net;const go=el("button","btn","שיתוף ל"+net);go.style.width="100%";
   go.onclick=async()=>{if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:x.t,text:shareText(x)});return}catch(e){if(e.name==="AbortError")return}}
+    const dl=window.claude&&window.claude.use?await window.claude.use("downloads").catch(()=>null):null;
+    if(dl){try{await dl.save({filename:file.name,data:blob});toast("הכרטיס נשמר. פתחו את "+net+" והעלו אותו לסטורי 📲")}catch(e){if(e&&e.code=="declined")return;toast("השמירה לא זמינה כאן. אפשר לצלם את הכרטיס מהמסך")}return}
     const a=el("a");a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();toast("הכרטיס נשמר. פתחו את "+net+" והעלו אותו לסטורי 📲")};
   box.replaceChildren(im,el("p","","כרטיס מוכן לסטורי, עם הקישור לכישרון ב־Talent"),go);box.scrollIntoView({block:"nearest",behavior:"smooth"})}
 
