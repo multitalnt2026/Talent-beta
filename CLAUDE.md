@@ -17,8 +17,6 @@ Talent is a Hebrew (RTL) marketplace app prototype in a single file, `index.html
   `changes` = short Hebrew lines describing what differs from the last approved version. `overview` = the whole product as it will be once approved.
 - `state/product`: overview of the approved product `{n, overview, updatedTs}`. The page copies it from the draft on approval.
 - `versions/vN`: `{n, title, summary, changes, url, github, status: "approved", ts, approvedTs, processed, docUpdated, ideas}`. History; never edit an approved version's `url`.
-- `state/doc`: read-only copy of the presentation doc's APPROVED text for the split-screen panel `{blocks: [{t: "h1"|"h2"|"p", x} | {t: "ul"|"ol", i: [..]} | {t: "table", r: [[..]]}], rev, syncedTs, pending}`. Inline `**bold**` and `[text](url)` only. Leave out pending suggestions; `pending` = how many are open.
-- Workspace files: each version's app is also published INTO the workspace artifact as `vN.html` (same-origin, so the split-screen demo can embed it). `versions/vN.file` and `state/draft.file` point to it.
 - `ideas`: the notebook. `state/live`: optional "Claude is working on…" banner (`active`, `title`, `steps`).
 - No longer shown by the page: `turns`, `decisions`, `app/*`, `chat`/`sep` entries in `ideas`. Don't write them.
 
@@ -27,8 +25,8 @@ Talent is a Hebrew (RTL) marketplace app prototype in a single file, `index.html
 1. At the start, read `versions` for an approval with `processed: false`. If found: set `processed: true`, record the version in this file, and start the next draft on a NEW artifact.
 2. Make the code change in `index.html`, test it, commit and push to `claude/map-tab-modern-ui-omcquc`.
 3. Publish the draft: copy `index.html` to `versions/vN/index.html` in the scratchpad (N = next version) and publish with `capabilities: {downloads: true}`. While a draft is unapproved, republish to the same draft path (same URL). Never republish an approved version's URL.
-4. Publish the same `index.html` into the workspace artifact as `vN.html` (`files: {"vN.html": <path>}`), then write `state/draft` with the cumulative `changes` since the last approved version, the draft `url`, `file: "vN.html"`, and the full `overview`.
-5. Presentation doc: suggestions only (suggestion mode), so nothing replaces approved text until the owner accepts it. At the start of a round, if the doc's approved text changed (suggestions accepted or edits), rewrite `state/doc` from it.
+4. Write `state/draft` with the cumulative `changes` since the last approved version, the draft `url`, and the full `overview`.
+5. Presentation doc: suggestions only (suggestion mode), so nothing replaces approved text until the owner accepts it.
 6. If the owner approves in chat instead of the button: write `versions/vN` (approved, `processed: true`), copy `overview` to `state/product`, delete `state/draft`.
 
 ## Rules from the owner
