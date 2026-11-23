@@ -347,12 +347,14 @@ dialog.full{margin:0 auto;height:100dvh;max-height:100dvh;border-radius:0;backgr
 .so i svg{width:28px;height:28px}
 .so.wa i{background:#25d366}.so.ig i{background:radial-gradient(circle at 30% 110%,#fdc468 0%,#f77737 25%,#e1306c 55%,#833ab4 90%)}.so.tt i{background:#111;box-shadow:inset 3px 0 0 #25f4ee,inset -3px 0 0 #fe2c55}.so.fb i{background:#1877f2}
 .srow{display:flex;gap:.5rem;margin-top:1rem}.srow .btn{flex:1}
+.colcard{display:flex;gap:.8rem;align-items:center;background:var(--paper);border-radius:1.2rem;padding:.6rem;margin:.25rem 0 .5rem;border:1px solid var(--line)}.colcard .mos{width:86px;flex:none;border-radius:.9rem}.colcard .mos .art{font-size:1rem}.colcard .mos.one .art{font-size:2rem}.colcard b{display:block;font-weight:700}.colcard small{display:block;color:var(--muted);font-size:.82rem}.colcard .lnk{direction:ltr;text-align:right;color:var(--brand)}
 .story{display:grid;justify-items:center;gap:.75rem;margin-top:1rem}
 .story img{width:58%;border-radius:1rem;box-shadow:var(--shadow)}
 .story p{margin:0;color:var(--muted);font-size:.88rem;text-align:center}
 /* ===== roles ===== */
 #app[data-role="scout"] #n-post{display:none}
 .own-tag{background:var(--cta);color:var(--on-cta)}
+.tag.promo{background:#fff0c9;color:#8a5a00;margin-inline-end:.25rem}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.promo{background:#463813;color:#ffd77a}}
 /* ===== stories ===== */
 .stories{display:flex;gap:.8rem;overflow-x:auto;padding:.9rem 1.25rem .1rem}
 .sto{flex:none;width:70px;background:none;border:0;padding:0;display:grid;justify-items:center;gap:.25rem;font-size:.72rem;color:var(--ink);position:relative}
@@ -517,6 +519,7 @@ dialog.ios::backdrop{background:rgba(0,0,0,.35)}
 .photo small{color:var(--muted);font-size:.82rem}
 .row2{display:grid;grid-template-columns:1.6fr 1fr;gap:.6rem}
 .ints{display:flex;flex-wrap:wrap;gap:.5rem}
+.parent{background:var(--tint);border-radius:1rem;padding:.8rem;margin-bottom:.85rem}
 .locbtn{display:flex;align-items:center;gap:.4rem;margin-top:.4rem;font-size:.88rem}
 #g-land{padding:0}
 .lhero{position:relative;height:50dvh;min-height:320px;overflow:hidden;background:radial-gradient(circle at 80% 10%,rgba(255,255,255,.35),transparent 40%),linear-gradient(160deg,#0b7f86,#36a9a3 55%,#9fded8)}
@@ -701,7 +704,8 @@ dialog.ios::backdrop{background:rgba(0,0,0,.35)}
     <p class="lede">רק מה שכישרון צריך לדעת כשאתם פונים אליו. בלי פוסטים, בלי עוקבים.</p>
     <form id="gs-f" novalidate>
       <div class="photo"><label for="gs-ph" id="gs-phl" aria-label="הוספת תמונת פרופיל">📷</label><input class="sr" id="gs-ph" type="file" accept="image/*"><small>תמונת פרופיל (לא חובה)</small></div>
-      <div class="row2"><label class="field"><span>שם פרטי</span><input id="gs-n" autocomplete="given-name" placeholder="למשל: נועם"></label><label class="field"><span>גיל</span><input id="gs-a" type="number" inputmode="numeric" min="16" max="99" placeholder="29"></label></div>
+      <div class="row2"><label class="field"><span>שם פרטי</span><input id="gs-n" autocomplete="given-name" placeholder="למשל: נועם"></label><label class="field"><span>גיל</span><input id="gs-a" type="number" inputmode="numeric" min="1" max="99" placeholder="29"></label></div>
+      <div class="parent" id="gs-par" hidden><p class="hint" style="margin:0 0 .6rem">מתחת לגיל 16 נרשמים עם הורה. ההורה מזדהה ואחראי לשימוש באפליקציה.</p><div class="row2"><label class="field"><span>שם ההורה</span><input id="gs-pn" autocomplete="off"></label><label class="field"><span>טלפון ההורה</span><input id="gs-pp" type="tel" inputmode="tel" dir="ltr" placeholder="050-123-4567"></label></div><label class="check" style="margin-top:0"><input type="checkbox" id="gs-pc"><span>אני ההורה, מזדהה ואחראי/ת לשימוש באפליקציה</span></label></div>
       <label class="field"><span>איפה אתם גרים?</span><select id="gs-c"></select></label>
       <button type="button" class="linkb locbtn" id="gs-loc">📍 השתמשו במיקום שלי</button>
       <div class="field" style="margin-top:.6rem"><span>מה מעניין אתכם? <small>(לפחות 3)</small></span><div class="ints" id="gs-i" role="group" aria-label="תחומי עניין"></div><small>זה מה שמכייל את הפיד מהיום הראשון. אחר כך הלייקים והשמירות שלכם ימשיכו לחדד אותו.</small></div>
@@ -717,6 +721,8 @@ dialog.ios::backdrop{background:rgba(0,0,0,.35)}
     <form id="gk-f" novalidate>
       <div class="photo"><label for="gk-ph" id="gk-phl" aria-label="הוספת תמונת פרופיל">📷</label><input class="sr" id="gk-ph" type="file" accept="image/*"><small>תמונה אמיתית שלכם מגדילה פניות</small></div>
       <label class="field"><span>שם מלא</span><input id="gk-n" autocomplete="name" placeholder="למשל: יונתן אברהמי"></label>
+      <label class="field"><span>גיל</span><input id="gk-a" type="number" inputmode="numeric" min="1" max="99" placeholder="32"></label>
+      <div class="parent" id="gk-par" hidden><p class="hint" style="margin:0 0 .6rem">מתחת לגיל 16 נרשמים עם הורה. ההורה מזדהה ואחראי לשימוש באפליקציה.</p><div class="row2"><label class="field"><span>שם ההורה</span><input id="gk-pn" autocomplete="off"></label><label class="field"><span>טלפון ההורה</span><input id="gk-pp" type="tel" inputmode="tel" dir="ltr" placeholder="050-123-4567"></label></div><label class="check" style="margin-top:0"><input type="checkbox" id="gk-pc"><span>אני ההורה, מזדהה ואחראי/ת לשימוש באפליקציה</span></label></div>
       <label class="field"><span>עיר</span><select id="gk-c"></select></label>
       <label class="field"><span>משפט עליכם <small>(לא חובה)</small></span><textarea id="gk-b" rows="2" placeholder="מנגן 15 שנה, מלמד בסבלנות ובכיף"></textarea></label>
       <p class="err" id="gk-err" role="alert"></p>
@@ -753,10 +759,11 @@ dialog.ios::backdrop{background:rgba(0,0,0,.35)}
     <input class="sr" id="f-m" type="file" accept="image/*,video/*" multiple>
     <div class="thumbs" id="thumbs"></div>
     <label for="f-t">מה אתם מציעים?</label><input id="f-t" required placeholder="למשל: עוגות יום הולדת בעבודת יד">
-    <label for="f-p">מחיר התחלתי בשקלים</label><input id="f-p" type="number" min="0" required inputmode="numeric" placeholder="למשל 250">
+    <label for="f-p">מחיר התחלתי בשקלים</label><input id="f-p" type="number" min="50" required inputmode="numeric" placeholder="מ־₪50 ומעלה">
     <label for="f-u">על מה המחיר?</label><select id="f-u"><option>לשיעור</option><option>לשעה</option><option>לאדם</option><option>למוצר</option><option>לפרויקט</option><option>לביקור</option><option>לסדנה</option></select>
     <label for="f-cp">מדיניות ביטול</label><select id="f-cp"><option>ביטול חינם עד 24 שעות לפני. אחרי זה אין החזר.</option><option selected>ביטול חינם עד 48 שעות לפני. אחרי זה 50% החזר.</option><option>ביטול חינם עד 7 ימים לפני. אחרי זה 50% החזר.</option><option>אין ביטולים אחרי אישור ההצעה.</option></select>
     <label for="f-c">קטגוריה</label><select id="f-c"></select>
+    <label class="check" id="f-certw" hidden><input type="checkbox" id="f-cert"><span>יש לי הסמכה מקצועית מתאימה לתחום (לא נדרש רישיון)</span></label>
     <label for="f-l">איפה זה קורה?</label><select id="f-l"></select>
     <label for="f-f">באיזו תדירות?</label><select id="f-f"><option>חד־פעמי</option><option>פעם בשבוע</option><option>כל שבועיים</option><option>פעם בחודש</option><option>פתוח כל השבוע</option></select>
     <div id="dayw" hidden><label for="f-y">באיזה יום?</label><select id="f-y"></select></div>
@@ -918,8 +925,9 @@ const put=(sel,n,label,s)=>{const e=document.querySelector(sel);e.insertAdjacent
 
 /* ---------- data ---------- */
 const G=[["#bfece7","#4fb8b0"],["#ffd3c4","#ff8f73"],["#fff0b8","#f2c14e"],["#d6e4ff","#8fa8e8"],["#e6d7f7","#b69be0"],["#c9f1d4","#6cc48a"]];
-const cats=["טיולים","אוכל","מוזיקה","יצירה","צילום","עיצוב","תיקונים"];
-const CE={"טיולים":"🧭","אוכל":"🍰","מוזיקה":"🎵","יצירה":"🎨","צילום":"📷","עיצוב":"✏️","תיקונים":"🛠️"};
+const cats=["טיולים","אוכל","מוזיקה","לימודים","יצירה","ספורט","יופי","צילום","עיצוב","תיקונים"];
+const CE={"טיולים":"🧭","אוכל":"🍰","מוזיקה":"🎵","יצירה":"🎨","צילום":"📷","עיצוב":"✏️","תיקונים":"🛠️","לימודים":"📚","ספורט":"🏄","יופי":"💅"};
+const CERT=["יופי"];
 const DAYS=["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
 const P={"תל אביב":[32.08,34.78],"רמת גן":[32.07,34.83],"הרצליה":[32.17,34.84],"נתניה":[32.33,34.86],"מודיעין":[31.90,35.01],"ירושלים":[31.77,35.21],"חיפה":[32.79,34.99],"זכרון יעקב":[32.57,34.95],"באר שבע":[31.25,34.79],"מצפה רמון":[30.61,34.80],"אילת":[29.56,34.95],"ראש פינה":[32.97,35.54],"כנרת":[32.79,35.57],"עין גדי":[31.46,35.39]};
 const OUT=[[35.10,33.09],[34.99,32.82],[34.85,32.33],[34.77,32.08],[34.65,31.80],[34.27,31.30],[34.90,29.55],[35.0,29.5],[35.15,30.0],[35.40,30.9],[35.45,31.4],[35.55,32.0],[35.55,32.7],[35.6,32.85],[35.8,33.0],[35.85,33.3],[35.55,33.25],[35.30,33.1]];
@@ -942,11 +950,23 @@ const D=[
 {n:"דנה פרץ",t:"צלילת היכרות באילת",p:340,u:"לאדם",c:"טיולים",e:"🤿",r:1,loc:"אילת",f:"פתוח כל השבוע",st:4.9,rc:264,dur:"שעתיים",resp:"עונה תוך 30 דק׳",d:"בלי ניסיון קודם. הדרכה קצרה, צלילה בשונית לעומק 6 מטר וכל הציוד. מגיל 10."},
 {n:"רז אלמוג",t:"שיעורי פסנתר לילדים",p:170,u:"לשיעור",c:"מוזיקה",e:"🎹",r:1.1,loc:"נתניה",f:"פעם בשבוע",day:"ראשון",st:4.9,rc:58,dur:"45 דק׳",resp:"עונה תוך שעה",d:"שיטה משחקית לגילאי 5 עד 12, עם קריאת תווים מהשיעור הראשון. רסיטל קטן בסוף כל שנה."},
 {n:"סהר נגר",t:"נגרות בהתאמה אישית",p:900,u:"למדף",c:"תיקונים",e:"🪚",r:1.15,loc:"רמת גן",st:4.8,rc:45,dur:"שבועיים",resp:"עונה תוך 3 שעות",d:"מדפים, ספריות ושולחנות מעץ מלא לפי מידה. מדידה בבית, הדמיה לאישור והתקנה כלולה."},
-{n:"יעל מור",t:"הזמנה מאוירת לחתונה",p:850,u:"לעיצוב",c:"עיצוב",e:"💌",r:1.3,loc:"חיפה",st:5.0,rc:33,dur:"10 ימים",resp:"עונה תוך שעתיים",d:"איור אישי שלכם, קובץ להדפסה ולוואטסאפ, ושני סבבי תיקונים. אפשר להוסיף שלטי הכוונה תואמים."}
+{n:"יעל מור",t:"הזמנה מאוירת לחתונה",p:850,u:"לעיצוב",c:"עיצוב",e:"💌",r:1.3,loc:"חיפה",st:5.0,rc:33,dur:"10 ימים",resp:"עונה תוך שעתיים",d:"איור אישי שלכם, קובץ להדפסה ולוואטסאפ, ושני סבבי תיקונים. אפשר להוסיף שלטי הכוונה תואמים."},
+{n:"אביב קורן",gd:"m",h:"aviv.backgammon",t:"ציור על לוח שש־בש",p:450,u:"ללוח",c:"יצירה",e:"🎲",r:1.2,loc:"באר שבע",st:4.9,rc:41,dur:"10 ימים",resp:"עונה תוך שעה",paid:true,d:"ציור ידני בהתאמה אישית: שמות, דמויות או נוף. שכבת לכה עמידה, מתנה שנשארת לשנים."},
+{n:"עדי פרידמן",gd:"f",h:"adi.wood",t:"עבודות עץ בהזמנה",p:180,u:"לפריט",c:"יצירה",e:"🪵",r:1.1,loc:"זכרון יעקב",st:4.8,rc:57,dur:"שבועיים",resp:"עונה תוך 3 שעות",d:"קרשי חיתוך, מגשים ושלטים מעץ מלא עם חריטה אישית."},
+{n:"נטע אורן",gd:"f",h:"neta.handmade",t:"עבודות יד ומקרמה",p:120,u:"לפריט",c:"יצירה",e:"🧶",r:1.35,loc:"מודיעין",st:4.9,rc:73,dur:"שבוע",resp:"עונה תוך שעה",d:"תליות מקרמה, סלסלות ושטיחונים בעבודת יד, בצבעים שתבחרו."},
+{n:"אלון ברגר",gd:"m",h:"alon.math",t:"שיעורי מתמטיקה לבגרות",p:160,u:"לשיעור",c:"לימודים",e:"📐",r:1,loc:"רמת גן",f:"פעם בשבוע",day:"רביעי",st:4.9,rc:128,dur:"60 דק׳",resp:"עונה תוך 20 דק׳",paid:true,d:"הכנה לבגרות מ־3 עד 5 יחידות, בזום או פרונטלי. מתרגלים על מבחנים אמיתיים."},
+{n:"ליה כרמי",gd:"f",h:"lia.jewelry",t:"תכשיטים בעבודת יד",p:180,u:"לתכשיט",c:"עיצוב",e:"💍",r:1.25,loc:"תל אביב",st:5.0,rc:66,dur:"5 ימים",resp:"עונה תוך שעה",paid:true,d:"שרשראות וטבעות מכסף ומזהב 14K, עם חריטה של שם או תאריך."},
+{n:"תום אזולאי",gd:"m",h:"tom.surf",t:"שיעורי גלישה לגלים",p:220,u:"לשיעור",c:"ספורט",e:"🏄",r:1.3,loc:"הרצליה",f:"פתוח כל השבוע",st:4.8,rc:154,dur:"90 דק׳",resp:"עונה תוך 30 דק׳",paid:true,d:"שיעור פרטי או זוגי, כולל גלשן וחליפה. מגיל 8, גם בלי ניסיון."},
+{n:"רונן גבאי",gd:"m",h:"ronen.markets",t:"שיעורים על שוק ההון",p:250,u:"לשיעור",c:"לימודים",e:"📈",r:1,loc:"תל אביב",st:4.7,rc:49,dur:"90 דק׳",resp:"עונה תוך 3 שעות",d:"איך בונים תיק השקעות, מה ההבדל בין מניה לקרן, ואיך לא להיבהל מירידות. לימוד בלבד, לא ייעוץ השקעות."},
+{n:"מיכל אדרי",gd:"f",h:"michal.carpentry",t:"סדנת נגרות למתחילים",p:240,u:"למשתתף",c:"יצירה",e:"🔨",r:1.2,loc:"ירושלים",f:"פעם בשבוע",day:"שישי",st:4.9,rc:62,dur:"3 שעות",resp:"עונה תוך שעה",d:"בונים שרפרף משלכם מאפס, כולל עץ, כלים והדרכה. עד 8 משתתפים."},
+{n:"אורית לב",gd:"f",h:"orit.yoga",t:"יוגה בזריחה על החוף",p:70,u:"לאדם",c:"ספורט",e:"🧘",r:1.15,loc:"נתניה",f:"פעם בשבוע",day:"שבת",st:4.9,rc:88,dur:"75 דק׳",resp:"עונה תוך שעה",d:"שיעור לכל הרמות, מזרן ומים עלינו. אפשר להגיע לבד או עם חברים."},
+{n:"גלעד שני",gd:"m",h:"gilad.english",t:"אנגלית מדוברת למבוגרים",p:130,u:"לשיעור",c:"לימודים",e:"🗣️",r:1,loc:"חיפה",f:"פעם בשבוע",day:"שני",st:4.8,rc:71,dur:"45 דק׳",resp:"עונה תוך 20 דק׳",d:"שיחה חופשית, אוצר מילים לעבודה ולטיולים, בלי דקדוק משעמם."},
+{n:"סתיו מלכה",gd:"f",h:"stav.nails",t:"בניית ציפורניים בג׳ל",p:150,u:"לטיפול",c:"יופי",e:"💅",r:1.3,loc:"באר שבע",st:4.8,rc:97,dur:"שעה וחצי",resp:"עונה תוך שעה",cert:"מוסמכת לבניית ציפורניים",paid:true,d:"בנייה, מילוי ועיצוב, בחומרים היפואלרגניים."},
+{n:"שני גולד",gd:"f",h:"shani.pottery",t:"כוסות קרמיקה בצביעה אישית",p:85,u:"לכוס",c:"יצירה",e:"☕",r:1.2,loc:"רמת גן",st:4.9,rc:44,dur:"10 ימים",resp:"עונה תוך שעתיים",d:"כוס בעבודת יד עם שם, ציור או משפט שתבחרו. מתאימה למדיח."}
 ].map((x,i)=>Object.assign({f:"חד־פעמי",day:"",g:i%6,i},x));
 const RVP=[["רותם ג.",5,"הגיע בדיוק בזמן, עבד נקי ומסודר. כבר המלצתי לחברים.","לפני שבוע"],["אסף ל.",5,"שווה כל שקל. התקשורת בצ׳אט הייתה מהירה וברורה.","לפני שבועיים"],["ענת ש.",4,"חוויה מעולה, רק התחלנו קצת באיחור. נחזור שוב.","לפני חודש"],["שקד מ.",5,"יחס אישי ממש, הרגשנו שאכפת לו מהתוצאה.","לפני 3 שבועות"],["מיכל ר.",5,"הילדים לא הפסיקו לדבר על זה כל הערב.","לפני 5 ימים"],["עידו ב.",4,"מקצועי מאוד. המחיר קצת גבוה אבל מוצדק.","לפני חודשיים"]];
 D.forEach(x=>{x.rv=[0,1,2].map(k=>RVP[(x.i*2+k)%RVP.length])});
-const CPOL={"טיולים":"ביטול חינם עד 72 שעות לפני. אחרי זה 50% החזר.","אוכל":"ביטול חינם עד 3 ימים לפני. אחרי זה אין החזר, כי המצרכים כבר נקנו.","מוזיקה":"ביטול או הזזה חינם עד 24 שעות לפני השיעור. אחרי זה השיעור מחויב.","יצירה":"ביטול חינם עד 48 שעות לפני. אחרי זה 50% החזר.","צילום":"ביטול חינם עד 7 ימים לפני. אחרי זה 50% החזר.","עיצוב":"ביטול חינם לפני תחילת העבודה. אחרי שליחת הסקיצות אין החזר.","תיקונים":"ביטול חינם עד שעתיים לפני הביקור."};
+const CPOL={"לימודים":"ביטול או הזזה חינם עד 24 שעות לפני השיעור. אחרי זה השיעור מחויב.","ספורט":"ביטול חינם עד 24 שעות לפני. במזג אוויר לא מתאים, מזיזים בלי עלות.","יופי":"ביטול חינם עד 24 שעות לפני הטיפול. אחרי זה 50% מהמחיר.","טיולים":"ביטול חינם עד 72 שעות לפני. אחרי זה 50% החזר.","אוכל":"ביטול חינם עד 3 ימים לפני. אחרי זה אין החזר, כי המצרכים כבר נקנו.","מוזיקה":"ביטול או הזזה חינם עד 24 שעות לפני השיעור. אחרי זה השיעור מחויב.","יצירה":"ביטול חינם עד 48 שעות לפני. אחרי זה 50% החזר.","צילום":"ביטול חינם עד 7 ימים לפני. אחרי זה 50% החזר.","עיצוב":"ביטול חינם לפני תחילת העבודה. אחרי שליחת הסקיצות אין החזר.","תיקונים":"ביטול חינם עד שעתיים לפני הביקור."};
 const cpol=x=>x.cp||CPOL[x.c]||"ביטול חינם עד 48 שעות לפני. אחרי זה 50% החזר.";
 const sched=x=>x.f&&x.f!=="חד־פעמי"?(x.f==="פתוח כל השבוע"?x.f:x.f+(x.day?", יום "+x.day:"")):"";
 const ini=n=>n.split(/[\s־]/).filter(Boolean).slice(0,2).map(w=>w[0]).join("");
@@ -959,8 +979,8 @@ const liked=new Set([D[10],D[6]]),score={"טיולים":1,"יצירה":1};
 const favs=new Set([D[10],D[6],D[12],D[4],D[9]]);
 const cols=[{n:"טיול לצפון",s:new Set([D[12]])},{n:"מתנות ליום הולדת",s:new Set([D[4],D[6]])},{n:"חופשה בדרום",s:new Set([D[10]])}];
 const H=["noa.watercolor","daniel.guitar","maya.cooks","yoav.bikes","shir.cakes","omer.design","tamar.ceramics","lior.songs","gal.upholstery","hila.photo","mor.jeeps","roni.market","itay.kayaks","karmel.winery","dana.dive","raz.piano","sahar.wood","yael.illustrates"];
-D.forEach(x=>x.h=H[x.i]);let ME="";
-const GD="fmfmfmfmmfffmffmmf";D.forEach(x=>x.gd=GD[x.i]);
+D.forEach(x=>x.h=x.h||H[x.i]);[4,9,10].forEach(i=>D[i].paid=true);let ME="";
+const GD="fmfmfmfmmfffmffmmf";D.forEach(x=>x.gd=x.gd||GD[x.i]);
 const $=s=>document.querySelector(s);
 const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
 function art(x){if(x.src){if(x.vid){const v=el("video","art");v.src=x.src;v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;return v}const im=el("img","art");im.src=x.src;im.alt="";return im}
@@ -968,7 +988,10 @@ function art(x){if(x.src){if(x.vid){const v=el("video","art");v.src=x.src;v.mute
   a.style.background="radial-gradient(circle at 28% 18%,rgba(255,255,255,.6),transparent 55%),linear-gradient(145deg,"+G[x.g][0]+","+G[x.g][1]+")";return a}
 function avatar(name,g,cls){const a=el("div","av"+(cls?" "+cls:""),ini(name));a.style.background="linear-gradient(145deg,"+G[g%6][0]+","+G[g%6][1]+")";a.setAttribute("aria-hidden","true");return a}
 function toast(t,act,fn){const e=$("#toast");e.replaceChildren(el("span","",t));if(act){const b=el("button","",act);b.onclick=()=>{e.classList.remove("on");try{e.hidePopover()}catch(_){}fn()};e.append(b)}try{e.hidePopover();e.showPopover()}catch(_){}requestAnimationFrame(()=>e.classList.add("on"));clearTimeout(toast.t);toast.t=setTimeout(()=>{e.classList.remove("on");setTimeout(()=>{if(!e.classList.contains("on"))try{e.hidePopover()}catch(_){}},250)},act?4000:2300)}
-const order=l=>[...l].sort((a,b)=>(score[b.c]||0)-(score[a.c]||0)||a.i-b.i);
+const boostSet=new Set();
+const inInts=x=>!!(user&&(user.ints||[]).includes(x.c));
+const rank=x=>(boostSet.has(x)?100:0)+(score[x.c]||0)*3+(inInts(x)?6:0)+(x.paid&&inInts(x)?4:x.paid?1:0);
+const order=l=>[...l].sort((a,b)=>rank(b)-rank(a)||a.i-b.i);
 const shown=()=>{const l=items.filter(x=>cat==="הכל"||x.c===cat);return near&&userLoc?l.sort((a,b)=>(distKm(a)??999)-(distKm(b)??999)):order(l)};
 function heartBtn(x){const h=el("button","heart");h.innerHTML=svg("heart");h.dataset.like=x.i;h.setAttribute("aria-pressed",liked.has(x));h.setAttribute("aria-label","אהבתי: "+x.t);h.onclick=e=>{e.stopPropagation();like(x)};return h}
 function bmBtn(x){const h=el("button","heart bm");h.innerHTML=svg("book");h.dataset.fav=x.i;h.setAttribute("aria-pressed",favs.has(x));h.setAttribute("aria-label","שמירה למועדפים: "+x.t);h.onclick=e=>{e.stopPropagation();fav(x)};return h}
@@ -976,22 +999,24 @@ function markAll(){const bi=i=>items.find(x=>x.i===+i);
   document.querySelectorAll("[data-like]").forEach(b=>b.setAttribute("aria-pressed",liked.has(bi(b.dataset.like))));
   document.querySelectorAll("[data-fav]").forEach(b=>b.setAttribute("aria-pressed",favs.has(bi(b.dataset.fav))));
   const n=$("#fav-n");n.textContent=favs.size||"";n.hidden=!favs.size}
-function cardMeta(x){const m=el("div","meta");m.append(el("b","",x.t),el("div","sub",x.n));const s=el("div","sub");if(x.rc)s.append(el("span","rate",x.st.toFixed(1)),el("span","","("+x.rc+")"));else s.append(el("span","","חדש"));const dk=distKm(x);s.append(el("span","","· "+x.loc+(dk!=null?" · "+fmtKm(dk):"")));m.append(s);if(x.own)m.append(el("span","tag own-tag","הכישרון שלכם"));else if(sched(x))m.append(el("span","tag",sched(x)));return m}
+function cardMeta(x){const m=el("div","meta");m.append(el("b","",x.t),el("div","sub",x.n));const s=el("div","sub");if(x.rc)s.append(el("span","rate",x.st.toFixed(1)),el("span","","("+x.rc+")"));else s.append(el("span","","חדש"));const dk=distKm(x);s.append(el("span","","· "+x.loc+(dk!=null?" · "+fmtKm(dk):"")));m.append(s);if(x.own)m.append(el("span","tag own-tag","הכישרון שלכם"));else{if(x.paid)m.append(el("span","tag promo","⭐ מקודם"));if(x.cert)m.append(el("span","tag","✓ "+x.cert));if(sched(x))m.append(el("span","tag",sched(x)))}return m}
 function photo(x){const ph=el("div","ph"),b=el("button","tile");b.setAttribute("aria-label",x.t+", "+x.n+", החל מ־"+nis(x.p));b.append(art(x));b.onclick=()=>openDet(x);ph.append(b,heartBtn(x),bmBtn(x),el("span","price",nis(x.p)));return ph}
 function pins(box,l,emptyTxt){box.replaceChildren();if(!l.length){box.append(el("p","empty",emptyTxt));return}
   l.forEach(x=>{const p=el("article","pin"),ph=photo(x);ph.style.setProperty("--r",x.r);p.append(ph,cardMeta(x));box.append(p)})}
 function rail(box,l,emptyTxt){box.replaceChildren();if(!l.length){box.append(el("p","empty",emptyTxt));return}
   l.forEach(x=>{const c=el("article","card");c.append(photo(x),cardMeta(x));box.append(c)})}
 function paint(){const l=shown();
-  rail($("#rail"),[...l].sort((a,b)=>b.st-a.st||b.rc-a.rc).slice(0,6),"אין עדיין פרסומים כאן.");
+  rail($("#rail"),[...l].sort((a,b)=>(inInts(b)-inInts(a))||(!!b.paid-!!a.paid)||b.st-a.st||b.rc-a.rc).slice(0,6),"אין עדיין פרסומים כאן.");
   pins($("#feed"),l,"אין עדיין פרסומים כאן.");$("#fcount").textContent=near&&userLoc?"לפי מרחק מכם":liked.size?"מותאם ל־"+liked.size+" לייקים שלכם":l.length+" שירותים";
   if($("#mapd").open)drawMap()}
 function chips(){["#chips","#chips2"].forEach(id=>{const box=$(id);box.replaceChildren();if(id==="#chips"){const n=el("button","chip","📍 קרוב אליי");n.setAttribute("aria-pressed",near);n.onclick=async()=>{near=near?false:await askLocation();chips();paint()};box.append(n)}["הכל",...cats].forEach(c=>{const b=el("button","chip",(CE[c]?CE[c]+" ":"")+c);b.setAttribute("aria-pressed",c===cat);b.onclick=()=>{cat=c;mapSel=null;chips();paint();if(id==="#chips2")drawMap()};box.append(b)})})}
 /* like = social signal that trains the feed; favorite = private saving into collections */
 function like(x){if(liked.has(x)){liked.delete(x);score[x.c]=Math.max(0,(score[x.c]||1)-1)}else{liked.add(x);score[x.c]=(score[x.c]||0)+1;toast("❤️ נראה לכם יותר "+x.c+" בפיד")}
   markAll();$("#fcount").textContent=liked.size?"מותאם ל־"+liked.size+" לייקים שלכם":""}
-function fav(x){if(favs.has(x)){favs.delete(x);cols.forEach(c=>c.s.delete(x));toast("הוסר מהמועדפים")}else{favs.add(x);score[x.c]=(score[x.c]||0)+1;toast("נשמר למועדפים","שמירה לאוסף",()=>openPick(x))}
-  markAll();if($("#favd").open)renderFav()}
+/* saving: the talent gets a notification, the saved talent and its field move up, and its stories come first */
+function fav(x){if(favs.has(x)){favs.delete(x);boostSet.delete(x);cols.forEach(c=>c.s.delete(x));toast("הוסר מהמועדפים")}
+  else{favs.add(x);boostSet.add(x);score[x.c]=(score[x.c]||0)+2;toast("נשמר למועדפים · "+fnm(x)+" "+gv(x,"קיבל","קיבלה")+" התראה","שמירה לאוסף",()=>openPick(x))}
+  markAll();renderStories();if($("#favd").open)renderFav()}
 
 /* ---------- navigation ---------- */
 function go(id){if(id==="home"&&$("#app").dataset.view!=="home")paint();document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id===id));$("#app").dataset.view=id;
@@ -1062,8 +1087,26 @@ const PER={
   kid:x=>"אין בעיה, "+gv(x,"אני עובד","אני עובדת")+" נקי ובטוח גם כשיש ילדים בבית.",
   group:x=>"אם יש כמה פריטים, נעשה הכול באותו ביקור ונחסוך לכם.",
   port:x=>"הנה לפני ואחרי מהשבוע 👇",
-  what:x=>"חלקים בתשלום נפרד לפי מחירון, ותמיד באישור שלכם מראש."}};
-const SLOTS={"מוזיקה":["שלישי 17:30","רביעי 19:00","ראשון 18:00"],"טיולים":["שישי 15:15","שבת 15:15","ראשון 15:30"],"אוכל":["שישי 28.11","שישי 5.12","שישי 12.12"],"יצירה":["חמישי 18:00","חמישי 20:30","שבת 10:00"],"צילום":["שישי 15:30","שבת 15:45","שישי 5.12"],"עיצוב":["שני 10:00 בזום","שלישי 12:00 בזום"],"תיקונים":["מחר 9:00–12:00","מחר 16:00–19:00","ראשון 8:00–11:00"]};
+  what:x=>"חלקים בתשלום נפרד לפי מחירון, ותמיד באישור שלכם מראש."},
+"לימודים":{hi:x=>"היי! כאן "+fnm(x)+" 📚 מה רוצים ללמוד, ומה המטרה?",
+  where:x=>"אפשר בזום, ואפשר אצלי ב"+x.loc+". רוב התלמידים מעדיפים זום.",
+  kid:x=>"בטח, "+gv(x,"אני מלמד","אני מלמדת")+" גם תלמידי תיכון. בשיעור הראשון נבין יחד איפה עומדים.",
+  group:x=>"אפשר שיעור קבוצתי עד 4 משתתפים, ואז המחיר לכל אחד יורד ב־30%.",
+  port:x=>"הנה דוגמה מחומרי השיעור שלי 👇",
+  what:x=>"מחברת ומחשבון, או רק מחשב לזום. את כל החומרים "+gv(x,"אני שולח","אני שולחת")+" אחרי השיעור."},
+"ספורט":{hi:x=>"היי! כאן "+fnm(x)+" 🏄 יש לכם ניסיון, או שמתחילים מאפס?",
+  where:x=>"נפגשים ב"+x.loc+". את המיקום המדויק "+gv(x,"אני שולח","אני שולחת")+" יום לפני, לפי מזג האוויר.",
+  kid:x=>"ילדים מגיל 8 מצטרפים בכיף, עם השגחה צמודה.",
+  group:x=>"עד 4 משתתפים בקבוצה. לקבוצה פרטית יש מחיר מיוחד.",
+  port:x=>"ככה היה בשיעור האחרון 🌊",
+  what:x=>"בגד ים, מגבת ומים. את כל הציוד "+gv(x,"אני מביא","אני מביאה")+"."},
+"יופי":{hi:x=>"היי! כאן "+fnm(x)+" 💅 איזה טיפול חשבת?",
+  where:x=>"הקליניקה שלי ב"+x.loc+". אפשר גם טיפול בבית בתוספת קטנה.",
+  kid:x=>"טיפולים מגיל 16, ומתחת לזה רק בליווי הורה.",
+  group:x=>"לאירוע עם כמה בנות, כמו מסיבת רווקות, יש מחיר קבוצתי.",
+  port:x=>"הנה כמה עבודות מהשבוע 👇",
+  what:x=>"פשוט להגיע. "+(x.cert?"אני "+x.cert+", ו":"")+"כל הכלים מעוקרים."}};
+const SLOTS={"לימודים":["ראשון 17:00","רביעי 18:00","חמישי 19:30"],"ספורט":["שבת 7:00","שישי 7:30","ראשון 17:00"],"יופי":["ראשון 10:00","שלישי 14:00","חמישי 16:30"],"מוזיקה":["שלישי 17:30","רביעי 19:00","ראשון 18:00"],"טיולים":["שישי 15:15","שבת 15:15","ראשון 15:30"],"אוכל":["שישי 28.11","שישי 5.12","שישי 12.12"],"יצירה":["חמישי 18:00","חמישי 20:30","שבת 10:00"],"צילום":["שישי 15:30","שבת 15:45","שישי 5.12"],"עיצוב":["שני 10:00 בזום","שלישי 12:00 בזום"],"תיקונים":["מחר 9:00–12:00","מחר 16:00–19:00","ראשון 8:00–11:00"]};
 const slotsFor=x=>{const s=[...(SLOTS[x.c]||["מחר 10:00","מחר 17:00"])];if(x.day&&!s.some(v=>v.startsWith(x.day)))s.unshift(x.day+" "+(x.c==="טיולים"?"15:15":"18:00"));return s.slice(0,3)};
 function intent(s,t){s=" "+s.replace(/[?!.,]/g," ")+" ";
   if(t&&t.slots&&t.slots.some(v=>s.includes(v)))return"slot";
@@ -1095,11 +1138,12 @@ function persona(t,s){const x=t.x,Q=PER[x.c]||PER["יצירה"],k=intent(s,t),ou
   case"what":T(Q.what(x));break;
   case"dur":T(x.dur?"זה "+x.dur+".":"תלוי במה שצריך, בדרך כלל לא הרבה זמן.");break;
   case"port":T(Q.port(x));out.push({w:"them",pic:{e:x.e,g:(x.g+1)%6}},{w:"them",pic:{e:x.e,g:(x.g+3)%6}});break;
-  case"disc":if(!t.disc&&!t.booked){t.disc=true;const np=Math.round(t.price*.9/5)*5;t.price=np;T("בגלל שזו פנייה ראשונה, אם סוגרים השבוע "+gv(x,"אני יכול","אני יכולה")+" לרדת ל־"+nis(np)+" 🙂");out.push({offer:np})}else T("זה כבר המחיר הכי טוב שאני "+gv(x,"יכול","יכולה")+" לתת 🙏");break;
+  case"disc":if(!t.disc&&!t.booked){t.disc=true;const np=Math.max(50,Math.round(t.price*.9/5)*5);t.price=np;T("בגלל שזו פנייה ראשונה, אם סוגרים השבוע "+gv(x,"אני יכול","אני יכולה")+" לרדת ל־"+nis(np)+" 🙂");out.push({offer:np})}else T("זה כבר המחיר הכי טוב שאני "+gv(x,"יכול","יכולה")+" לתת 🙏");break;
   case"counter":{const n=+((s.replace(/,/g,"").match(/\d+/)||[0])[0]);if(!n){T("איזה מחיר חשבתם?");break}if(t.booked){T("ההזמנה כבר שולמה 🙂");break}
     if(n>=t.price){T("סגור, אין בעיה 😉");out.push({offer:n})}
+    else if(n<50){T("המחיר המינימלי בטאלנט הוא ₪50 🙂");break}
     else if(n>=Math.round(x.p*.85)){t.price=n;T("בסדר, "+gv(x,"מסכים","מסכימה")+" ל־"+nis(n)+". שלחתי הצעה מעודכנת:");out.push({offer:n})}
-    else{const np=Math.round(x.p*.9/5)*5;t.price=np;T("זה קצת נמוך לי 🙏 הכי נמוך שאני "+gv(x,"יכול","יכולה")+" זה "+nis(np)+".");out.push({offer:np})}break}
+    else{const np=Math.max(50,Math.round(x.p*.9/5)*5);t.price=np;T("זה קצת נמוך לי 🙏 הכי נמוך שאני "+gv(x,"יכול","יכולה")+" זה "+nis(np)+".");out.push({offer:np})}break}
   case"bypass":T(gv(x,"אני מעדיף","אני מעדיפה")+" שנסגור דרך טאלנט 🙂 ככה, אם משהו לא יהיה תקין, אתם יכולים לפתוח דרישת פיצוי, ואני "+gv(x,"מקבל","מקבלת")+" ביקורת מאומתת.");break;
   case"pay":T("משלמים כאן באפליקציה, ב־Apple Pay או באשראי. הכסף עובר אליי אחרי שאני "+gv(x,"מוסר","מוסרת")+" את השירות, ואם משהו לא תקין אפשר לפתוח דרישת פיצוי.");break;
   case"cancel":T("מדיניות הביטול שלי: "+cpol(x)+" זה מופיע גם בכרטיס ההצעה.");break;
@@ -1283,9 +1327,17 @@ function renderFav(){const b=$("#fv-body");b.replaceChildren();$("#fv-back").hid
   const all=fvCol==="all",list=all?[...favs]:[...fvCol.s];$("#fv-t").textContent=all?"כל המועדפים":fvCol.n;$("#fv-s").textContent=list.length+" שמורים";
   if(!list.length)b.append(el("p","empty",all?"עדיין אין מועדפים.":"האוסף ריק. שמרו לכאן מתוך \"כל המועדפים\" או מכל כישרון."));
   list.forEach(x=>{const r=el("div","fx");sRow(x,r);const a=el("button","btn soft mini",all?"לאוסף":"הסרה");a.onclick=()=>{if(all)openPick(x);else{fvCol.s.delete(x);renderFav();toast("הוסר מהאוסף")}};r.append(a);b.append(r)});
+  if(list.length){const sh=el("button","btn","שיתוף האוסף בוואטסאפ");sh.style.cssText="width:100%;margin-top:1rem";sh.onclick=()=>shareCol(all?{n:"המועדפים שלי",s:favs}:fvCol);b.append(sh)}
   if(!all){const row=el("div","srow"),rn=el("button","btn ghost","שינוי שם"),dl=el("button","btn ghost","מחיקת האוסף");
     rn.onclick=()=>{const n=prompt("שם חדש לאוסף",fvCol.n);if(n&&n.trim()){fvCol.n=n.trim();renderFav()}};
     dl.onclick=()=>{cols.splice(cols.indexOf(fvCol),1);fvCol=null;renderFav();toast("האוסף נמחק. הכישרונות נשארו במועדפים")};row.append(rn,dl);b.append(row)}}
+const colLink=c=>"https://talent.co.il/c/"+((user&&user.handle)||"me")+"-"+Math.abs([...c.n].reduce((a,ch)=>a*31+ch.charCodeAt(0)|0,7)).toString(36);
+function shareCol(c){const list=[...c.s],b=$("#sh-body");b.replaceChildren();$("#sh-t").textContent="שיתוף האוסף";
+  const pv=el("div","colcard"),m=mosaic(list);pv.append(m);const tx=el("div","tx");tx.append(el("b","",c.n),el("small","",list.length+" כישרונות בטאלנט"),el("small","lnk",colLink(c)));pv.append(tx);b.append(pv,el("p","hint","ככה הקישור ייראה בוואטסאפ. מי שפותח אותו רואה את כל הכישרונות באוסף."));
+  const txt="האוסף שלי בטאלנט: "+c.n+" ("+list.length+" כישרונות)\n"+list.slice(0,3).map(x=>"• "+x.t+" – "+x.n).join("\n")+(list.length>3?"\n…":"")+"\n"+colLink(c);
+  const row=el("div","srow"),wa=el("button","btn"),cp=el("button","btn soft","העתקת קישור");wa.innerHTML=svg("wa",18);wa.append("שליחה בוואטסאפ");
+  wa.onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank","noopener");
+  cp.onclick=()=>{(navigator.clipboard?navigator.clipboard.writeText(colLink(c)):Promise.reject()).then(()=>toast("הקישור הועתק"),()=>toast(colLink(c)))};row.append(wa,cp);b.append(row);$("#shr").showModal()}
 function openFav(){fvCol=null;fvNew=false;renderFav();$("#favd").showModal()}
 $("#f-fav").onclick=openFav;$("#fv-x").onclick=()=>$("#favd").close();$("#fv-back").onclick=()=>{fvCol=null;renderFav()};
 let pkItem=null,pkNew=false;
@@ -1300,7 +1352,7 @@ $("#pk-done").onclick=()=>{$("#pick").close();if($("#favd").open)renderFav()};
 /* ---------- share ---------- */
 const link=x=>"https://talent.co.il/@"+(x.h||ME);
 const shareText=x=>x.t+" – "+x.n+" ("+x.loc+"), החל מ־"+nis(x.p)+(x.rc?" · ★ "+x.st.toFixed(1)+" מ־"+x.rc+" ביקורות":"")+"\nמצאתי בטאלנט 👇";
-function openShare(x){const b=$("#sh-body");b.replaceChildren();const pv=el("div","sprev"),th=el("div","th");th.append(art(x));const tx=el("div","tx");tx.append(el("b","",x.t),el("small","",link(x)));pv.append(th,tx);b.append(pv);
+function openShare(x){$("#sh-t").textContent="שיתוף הכישרון";const b=$("#sh-body");b.replaceChildren();const pv=el("div","sprev"),th=el("div","th");th.append(art(x));const tx=el("div","tx");tx.append(el("b","",x.t),el("small","",link(x)));pv.append(th,tx);b.append(pv);
   const g=el("div","socials"),so=(cls,ic,name,fn)=>{const s=el("button","so "+cls),i=el("i");i.innerHTML=svg(ic);s.append(i,name);s.onclick=fn;g.append(s)};
   so("wa","wa","וואטסאפ",()=>{window.open("https://wa.me/?text="+encodeURIComponent(shareText(x)+"\n"+link(x)),"_blank","noopener")});
   so("ig","ig","אינסטגרם",()=>storyFor(x,"אינסטגרם"));
@@ -1350,7 +1402,7 @@ $("#s-q").oninput=renderSearch;$("#s-x").onclick=()=>$("#srch").close();
 $("#f-search").onclick=()=>{$("#s-q").value="";renderSearch();$("#srch").showModal();$("#s-q").focus()};
 
 /* ---------- bot ---------- */
-const KW={"טיולים":["טיול","סופ","שקיעה","מדבר","צלילה","קיאק","יין","סיור","חוויה","שוק"],"אוכל":["אוכל","עוגה","עוגות","ארוחה","ארוחת","בישול","קינוח","שישי"],"מוזיקה":["גיטרה","פסנתר","שיר","מוזיקה","נגינה"],"יצירה":["ציור","קרמיקה","יצירה","סדנה","דיוקן"],"צילום":["צלם","צילום","תמונות"],"עיצוב":["לוגו","עיצוב","הזמנה","איור","מיתוג","חתונה"],"תיקונים":["תיקון","אופניים","ספה","ריפוד","נגר","מדף","ספריה"]};
+const KW={"טיולים":["טיול","סופ","שקיעה","מדבר","צלילה","קיאק","יין","סיור","חוויה","שוק"],"אוכל":["אוכל","עוגה","עוגות","ארוחה","ארוחת","בישול","קינוח","שישי"],"מוזיקה":["גיטרה","פסנתר","שיר","מוזיקה","נגינה"],"יצירה":["ציור","קרמיקה","יצירה","סדנה","דיוקן","שש","עץ","נגרות","עבודות יד","מקרמה","כוס"],"צילום":["צלם","צילום","תמונות"],"עיצוב":["לוגו","עיצוב","הזמנה","איור","מיתוג","חתונה","תכשיט","שרשרת","טבעת"],"תיקונים":["תיקון","אופניים","ספה","ריפוד","מדף","ספריה"],"לימודים":["מתמטיקה","בגרות","שיעור","אנגלית","שוק ההון","השקעות","לימוד"],"ספורט":["גלישה","יוגה","ספורט","כושר","ים"],"יופי":["ציפורניים","יופי","טיפוח","לק","איפור"]};
 const REG={"בצפון":["חיפה","כנרת","ראש פינה","זכרון יעקב"],"בדרום":["באר שבע","מצפה רמון","אילת"],"במרכז":["תל אביב","רמת גן","הרצליה","נתניה","מודיעין"]};
 const BQ=["מתנה ליום הולדת עד ₪400","משהו לעשות בסופ״ש בצפון","שיעור מוזיקה לילד","איך מפרסמים כישרון?","איך עובד התשלום?"];
 function blog(cls,t){const m=el("div","m "+cls,t);$("#blog").append(m);m.scrollIntoView({block:"end"});return m}
@@ -1387,12 +1439,18 @@ const STO=[{i:10,t:"לפני שעה",f:[{e:"🌄",c:"יוצאים בעוד שע�
  {i:1,t:"לפני 5 שע׳",f:[{e:"🎸",c:"תלמיד חדש, שיר ראשון, אפס ויתורים"}]},
  {i:14,t:"אתמול",f:[{e:"🐠",c:"הראות היום: 25 מטר. הים כמו בריכה"},{e:"🤿",c:"יש מקום לצלילת היכרות ביום ראשון"}]},
  {i:6,t:"אתמול",f:[{e:"🏺",c:"כלים שיצאו מהשריפה הבוקר"}]},
- {i:2,t:"אתמול",f:[{e:"🍲",c:"התפריט של שישי: מפרום, אורז לבן וסלט חצילים"}]}];
+ {i:2,t:"אתמול",f:[{e:"🍲",c:"התפריט של שישי: מפרום, אורז לבן וסלט חצילים"}]},
+ {i:21,t:"לפני 40 דק׳",f:[{e:"📐",c:"טיפ לבגרות: תמיד לבדוק את התשובה בהצבה"},{e:"📝",c:"נשארו 2 מקומות לקבוצת חזרה לפני המבחן"}]},
+ {i:23,t:"לפני שעה",f:[{e:"🌊",c:"גלים של מטר וחצי הבוקר בהרצליה 🤙"}]},
+ {i:22,t:"לפני 4 שע׳",f:[{e:"💍",c:"קולקציית חנוכה: שרשראות עם חריטת שם"}]},
+ {i:18,t:"אתמול",f:[{e:"🎲",c:"לוח שש־בש לחתונה של דניאל ושירה"}]},
+ {i:28,t:"אתמול",f:[{e:"💅",c:"עיצוב חורף חדש: ורוד עתיק עם נצנצים"}]}];
 STO.forEach(s=>{s.x=D[s.i];s.seen=false});
 let myStories=[],myReels=0,sgList=[],sv={gi:0,fi:0,tm:0};
 function renderStories(){const row=$("#stories");if(!row)return;row.replaceChildren();
   sgList=[];if(ownItem&&myStories.length)sgList.push({x:ownItem,f:myStories,own:true,t:"עכשיו"});
-  sgList.push(...[...STO].sort((a,b)=>a.seen-b.seen));
+  const fv=STO.filter(s=>favs.has(s.x)),pd=STO.filter(s=>!favs.has(s.x)&&s.x.paid).sort((a,b)=>rank(b.x)-rank(a.x));
+  sgList.push(...[...fv].sort((a,b)=>a.seen-b.seen),...[...pd].sort((a,b)=>a.seen-b.seen));
   const tile=(x,label,seen,fn,add)=>{const b=el("button","sto"+(seen?" seen":"")+(add?" add":"")),r=el("span","ring"),i=el("span","in");i.append(art(x));r.append(i);b.append(r,el("span","nm",label));b.onclick=fn;b.setAttribute("aria-label",add?"הוספת סטורי":"סטורי של "+label);row.append(b);return b};
   if(ownItem&&!myStories.length){const b=tile(ownItem,"הסטורי שלכם",false,()=>openCreate("story"),true);b.append(el("span","pl","+"))}
   sgList.forEach((g,k)=>{const b=tile(g.x,g.own?"הסטורי שלכם":fnm(g.x),g.seen,()=>openStory(k));if(g.own){const p=el("span","pl","+");p.onclick=e=>{e.stopPropagation();openCreate("story")};b.append(p)}})}
@@ -1544,6 +1602,7 @@ function renderMine(){const b=$("#mine-body");if(!b||!user||user.role!=="talent"
   const pl=el("div","plan hot"),ph=el("div","ph");ph.append(art(x));pl.append(ph,el("h2","",x.t),el("p","",nis(x.p)+" "+(x.u||"")+" · "+x.loc+(sched(x)?" · "+sched(x):"")));
   const ms=el("div","mini-stats");(demo?[[214,"צפיות"],[37,"לייקים"],[9,"שמירות"],[12,"תגובות"]]:[[12,"צפיות"],[0,"לייקים"],[0,"שמירות"],[0,"תגובות"]]).forEach(([n,l])=>{const d=el("div");d.append(el("b","",n),el("span","",l));ms.append(d)});
   pl.append(el("p","","השבוע:"),ms);const v=el("button","btn ghost","איך סקאוטים רואים אותי");v.onclick=()=>openDet(x);const cr=el("button","btn","＋ רילס או סטורי");cr.onclick=()=>openCreate();pl.append(cr,v);b.append(pl);
+  const nt=el("div","box");nt.append(el("h3","","🔔 התראות"));(demo?[["🔖","נועם שמר את הכישרון שלכם למועדפים","לפני 5 דק׳"],["🔖","יעל שמרה את הכישרון שלכם לאוסף „מתנות”","אתמול"],["❤️","12 לייקים חדשים לרילס האחרון","השבוע"]]:[["👋","הכישרון שלכם באוויר. כשסקאוט ישמור אותכם, תקבלו כאן התראה.","עכשיו"]]).forEach(([i,t,w])=>{const p=el("p","");p.append(i+" "+t+" · ");p.append(el("small","",w));nt.append(p)});b.append(nt);
   const ct2=el("div","box");ct2.append(el("h3","","התוכן שלי"),el("p","",myReels+" רילס · "+myStories.length+" סטוריז פעילים"),el("p","","סטורי מופיע בראש מסך הגילוי ל־24 שעות. רילס נשאר בלשונית הרילס ובפרופיל."));b.append(ct2);
   const inq=el("button","btn soft","פניות מסקאוטים ("+CL.length+")");inq.style.cssText="width:calc(100% - 2rem);margin:0 1rem .85rem";inq.onclick=()=>go("chats");b.append(inq);
   if(demo){const s=el("div","plan");s.innerHTML='<h2>סיכום נובמבר</h2><div class="kv"><span>18 שיעורים × ₪150</span><b>₪2,700</b></div><div class="kv"><span>עמלת טאלנט 5%</span><b>−₪135</b></div><div class="kv"><span>נטו להעברה</span><b style="color:var(--brand)">₪2,565</b></div><p style="font-size:.8rem;margin-top:.5rem">התשלום עובר אליכם אחרי כל שיעור שנמסר.</p>';b.append(s)}
@@ -1566,6 +1625,8 @@ function applyUser(){const u=user;$("#app").dataset.role=u.role;ME=u.handle;$("#
   const hh=new Date().getHours();$("#hello").textContent=(hh<5?"לילה טוב":hh<12?"בוקר טוב":hh<18?"צהריים טובים":"ערב טוב")+", "+u.name.split(" ")[0]+" 👋";
   setAv($("#me-av"),u);const nm=$("#n-mine");nm.dataset.v=u.role==="talent"?"mine":"me";nm.innerHTML=svg("user");nm.append(u.role==="talent"?"הכישרון שלי":"הפרופיל שלי");
   if(u.role==="talent"){ownItem=makeOwn(u);items=[ownItem,...D];seedClients()}else{ownItem=null;items=[...D];CL=[]}
+  /* a brand-new account starts clean: no demo likes, favorites or collections, so the first feed comes only from the chosen interests */
+  if(!u.demo){liked.clear();favs.clear();cols.length=0;boostSet.clear()}
   for(const k in score)delete score[k];(u.ints||[]).forEach(c=>score[c]=(score[c]||0)+2);liked.forEach(x=>score[x.c]=(score[x.c]||0)+1);
   chips();paint();fillChats();renderStories();buildReels();markAll();renderMine();renderMe();go("home");
   if(u.loc==="always"||u.loc==="using")fetchLoc(u.city).then(()=>{paint()})}
@@ -1614,9 +1675,9 @@ function otpReset(){const o=$("#otp");o.replaceChildren();for(let k=0;k<6;k++){c
 $("#go-re").onclick=()=>{otpReset();toast("שלחנו קוד חדש")};
 function otpOk(){$("#go-err").textContent="";$("#go-t").textContent="מאמתים…";clearInterval(otpT);setTimeout(()=>{setupTerms();gshow("g-terms")},700)}
 function setupTerms(){const s=reg.role==="scout",box=$("#gt-box");box.replaceChildren();
-  const T=[["חשבון מאומת","החשבון אישי ומאומת בטלפון. אחד לכל אדם."],["תשלומים רק באפליקציה","הכסף עובר לכישרון אחרי מסירת השירות. אם משהו לא תקין, הלקוח יכול לפתוח דרישת פיצוי. עסקה שנסגרת מחוץ לאפליקציה לא מוגנת."],["תיווך בלבד","טאלנט מתווכת בין כישרונות ללקוחות. אין בין טאלנט לכישרונות יחסי עובד ומעביד, וטאלנט לא קובעת מחירים, שעות או כללי עבודה."],["שירותים אסורים","אסור להציע או לרכוש שירות לא חוקי, וטאלנט לא אחראית לשירות כזה. חשבון שמפר את התקנון ייסגר."],["מחלוקות","טאלנט מתערבת במחלוקת רק כשחייבים, ויכולה להשעות חשבון ותשלומים עד שהמחלוקת נפתרת."],["מדיניות ביטול","לכל כישרון מדיניות ביטול משלו, שמופיעה בעמוד שלו ובכרטיס ההצעה. האפליקציה פועלת לפיה."],["ביקורות מאומתות","רק מי שסגר עסקה יכול לדרג."],["פרטיות","הטלפון והמייל לא מוצגים לאף משתמש. כישרונות רואים רק שם פרטי, תמונה, גיל, עיר ותחומי עניין של סקאוט."],["כבוד הדדי","בלי הטרדות, ספאם או תוכן פוגעני. אפשר לדווח מכל צ׳אט."]];
-  (s?[["מה סקאוטים עושים","גוללים, עושים לייק, מגיבים, שומרים ופונים לכישרונות. סקאוטים לא מפרסמים תוכן."],["גיל","מגיל 16. עסקה מעל ₪500 מגיל 18."]]
-    :[["עמלה","5% מכל עסקה, בכל המסלולים."],["אחריות","אתם מתחייבים לעמוד בהזמנות שאישרתם ולתאר את השירות בכנות."],["אישור תוכן","100 הכישרונות הראשונים מאושרים ידנית. אחר כך בדיקה אוטומטית, ובדיקה אנושית במקרים מורכבים."],["תשלום אליכם","עובר אחרי מסירת השירות, לחשבון הבנק שתגדירו. בזמן מחלוקת פתוחה התשלום יכול להיות מושהה."],["מדיניות הביטול שלכם","אתם קובעים אותה כשאתם מעלים את הכישרון, והיא מחייבת אתכם ואת הלקוח."],["מיסוי","דיווח על ההכנסות לרשויות באחריותכם."]]).concat(T).forEach(([h,p])=>box.append(el("h3","",h),el("p","",p)));
+  const T=[["חשבון מאומת","החשבון אישי ומאומת בטלפון. אחד לכל אדם."],["תשלומים רק באפליקציה","הכסף עובר לכישרון אחרי מסירת השירות. אם משהו לא תקין, הלקוח יכול לפתוח דרישת פיצוי. עסקה שנסגרת מחוץ לאפליקציה לא מוגנת."],["תיווך בלבד","טאלנט מתווכת בין כישרונות ללקוחות. אין בין טאלנט לכישרונות יחסי עובד ומעביד, וטאלנט לא קובעת מחירים, שעות או כללי עבודה."],["שירותים אסורים","אסור להציע או לרכוש שירות לא חוקי, וטאלנט לא אחראית לשירות כזה. חשבון שמפר את התקנון ייסגר."],["מחלוקות","טאלנט מתערבת במחלוקת רק כשחייבים, ויכולה להשעות חשבון ותשלומים עד שהמחלוקת נפתרת."],["מדיניות ביטול","לכל כישרון מדיניות ביטול משלו, שמופיעה בעמוד שלו ובכרטיס ההצעה. האפליקציה פועלת לפיה."],["ביקורות מאומתות","רק מי שסגר עסקה יכול לדרג."],["פרטיות","הטלפון והמייל לא מוצגים לאף משתמש. כישרונות רואים רק שם פרטי, תמונה, גיל, עיר ותחומי עניין של סקאוט."],["כבוד הדדי","בלי הטרדות, ספאם או תוכן פוגעני. אפשר לדווח מכל צ׳אט."],["גיל","השירות מגיל 16. מתחת לגיל 16, ההרשמה בהזדהות של הורה ובאחריותו."],["מחיר מינימלי","כל מוצר או שירות נמכר במחיר של ₪50 לפחות."]];
+  (s?[["מה סקאוטים עושים","גוללים, עושים לייק, מגיבים, שומרים ופונים לכישרונות. סקאוטים לא מפרסמים תוכן."],["טיפולים שדורשים הסמכה","בתחומים כמו טיפולי יופי ולייזר, הכישרון חייב בהסמכה מקצועית מתאימה (לא רישיון). כך גם תדעו מה לבדוק."]]
+    :[["עמלה","5% מכל עסקה, בכל המסלולים."],["אחריות","אתם מתחייבים לעמוד בהזמנות שאישרתם ולתאר את השירות בכנות."],["אישור תוכן","100 הכישרונות הראשונים מאושרים ידנית. אחר כך בדיקה אוטומטית, ובדיקה אנושית במקרים מורכבים."],["תשלום אליכם","עובר אחרי מסירת השירות, לחשבון הבנק שתגדירו. בזמן מחלוקת פתוחה התשלום יכול להיות מושהה."],["מדיניות הביטול שלכם","אתם קובעים אותה כשאתם מעלים את הכישרון, והיא מחייבת אתכם ואת הלקוח."],["מיסוי","דיווח על ההכנסות לרשויות באחריותכם."],["הסמכה","בתחומים כמו טיפולי יופי ולייזר נדרשת הסמכה מקצועית מתאימה (לא רישיון). אתם מצהירים שיש לכם אותה כשאתם מעלים כישרון בתחום."]]).concat(T).forEach(([h,p])=>box.append(el("h3","",h),el("p","",p)));
   const ch=$("#gt-checks");ch.replaceChildren();const req=s?["קראתי ואני מסכים/ה לתקנון ולמדיניות הפרטיות"]:["קראתי ואני מסכים/ה לתקנון ולמדיניות הפרטיות","אני מצהיר/ה שהפרטים נכונים ושאעמוד בהזמנות שאאשר","ידוע לי שטאלנט גובה עמלה של 5% מכל עסקה"];
   const all=[...req.map(t=>[t,1]),[s?"אשמח לקבל במייל המלצות על כישרונות חדשים":"אשמח לקבל טיפים לקידום הכישרון",0]];
   all.forEach(([t,r])=>{const l=el("label","check"),i=el("input");i.type="checkbox";if(r)i.dataset.req="1";l.append(i,el("span","",t+(r?"":" (לא חובה)")));ch.append(l);i.onchange=()=>{$("#gt-go").disabled=![...ch.querySelectorAll("[data-req]")].every(q=>q.checked)}});$("#gt-go").disabled=true}
@@ -1624,29 +1685,34 @@ $("#gt-go").onclick=()=>{reg.terms=new Date().toISOString();if(reg.role==="scout
 const cityOpts=sel=>{sel.replaceChildren(Object.assign(el("option","","בחרו עיר"),{value:""}),...Object.keys(P).map(c=>el("option","",c)))};
 function photoPick(inp,lab){inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{const c=document.createElement("canvas"),S=192,k=Math.max(S/im.width,S/im.height);c.width=c.height=S;c.getContext("2d").drawImage(im,(S-im.width*k)/2,(S-im.height*k)/2,im.width*k,im.height*k);
   reg.photo=c.toDataURL("image/jpeg",.82);lab.replaceChildren(Object.assign(el("img"),{src:reg.photo,alt:"תמונת הפרופיל שבחרתם"}))};im.src=URL.createObjectURL(f)}}
+const parentOk=(p,a)=>{if(a>=16)return"";const n=$("#"+p+"-pn").value.trim(),ph=$("#"+p+"-pp").value.replace(/\D/g,"");if(!n)return"מתחת לגיל 16 צריך שם של הורה";if(!/^0?5\d{8}$/.test(ph))return"טלפון ההורה לא נראה תקין";if(!$("#"+p+"-pc").checked)return"ההורה צריך לאשר שהוא מזדהה ואחראי";return""};
+["gs","gk"].forEach(p=>{const a=$("#"+p+"-a");a.addEventListener("input",()=>{const v=+a.value;$("#"+p+"-par").hidden=!(v>0&&v<16)})});
 function setupSProf(){cityOpts($("#gs-c"));$("#gs-n").value=reg.name||"";const w=$("#gs-i");w.replaceChildren();cats.forEach(c=>{const b=el("button","chip",CE[c]+" "+c);b.type="button";b.setAttribute("aria-pressed","false");b.onclick=()=>b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true");w.append(b)});photoPick($("#gs-ph"),$("#gs-phl"))}
 function setupTProf(){cityOpts($("#gk-c"));$("#gk-n").value=reg.name||"";photoPick($("#gk-ph"),$("#gk-phl"))}
 $("#gs-loc").onclick=async()=>{const p=await locPrompt();reg.loc=p;if(p==="never"){toast("בסדר, בחרו עיר מהרשימה");return}await fetchLoc("תל אביב");
   const best=Object.keys(P).sort((a,b)=>kmBetween([userLoc.la,userLoc.lo],P[a])-kmBetween([userLoc.la,userLoc.lo],P[b]))[0];$("#gs-c").value=best;toast("זיהינו: "+best+(userLoc.approx?" (משוער)":""))};
 $("#gs-f").onsubmit=e=>{e.preventDefault();const n=$("#gs-n").value.trim(),a=+$("#gs-a").value,c=$("#gs-c").value,ints=[...document.querySelectorAll("#gs-i .chip[aria-pressed=true]")].map(b=>b.textContent.split(" ").slice(1).join(" ")),er=$("#gs-err");
-  er.textContent=!n?"מה השם שלכם?":!(a>=16&&a<=99)?"הגיל צריך להיות בין 16 ל־99":!c?"בחרו עיר":ints.length<3?"בחרו לפחות 3 תחומי עניין":"";if(er.textContent)return;
-  Object.assign(reg,{name:n,age:a,city:c,ints});finish()};
-$("#gk-f").onsubmit=e=>{e.preventDefault();const n=$("#gk-n").value.trim(),c=$("#gk-c").value,er=$("#gk-err");er.textContent=!n?"מה השם שלכם?":!c?"בחרו עיר":"";if(er.textContent)return;
-  Object.assign(reg,{name:n,city:c,bio:$("#gk-b").value.trim()});openPost(true)};
+  er.textContent=!n?"מה השם שלכם?":!(a>0&&a<=99)?"מה הגיל שלכם?":parentOk("gs",a)||(!c?"בחרו עיר":ints.length<3?"בחרו לפחות 3 תחומי עניין":"");if(er.textContent)return;
+  Object.assign(reg,{name:n,age:a,city:c,ints,parent:a<16?{n:$("#gs-pn").value.trim(),ph:$("#gs-pp").value.trim()}:null});finish()};
+$("#gk-f").onsubmit=e=>{e.preventDefault();const n=$("#gk-n").value.trim(),a=+$("#gk-a").value,c=$("#gk-c").value,er=$("#gk-err");er.textContent=!n?"מה השם שלכם?":!(a>0&&a<=99)?"מה הגיל שלכם?":parentOk("gk",a)||(!c?"בחרו עיר":"");if(er.textContent)return;
+  Object.assign(reg,{name:n,age:a,city:c,bio:$("#gk-b").value.trim(),parent:a<16?{n:$("#gk-pn").value.trim(),ph:$("#gk-pp").value.trim()}:null});openPost(true)};
 function mkHandle(){const r=Math.floor(1000+Math.random()*9000);if(reg.method==="email"){const h=reg.email.split("@")[0].toLowerCase().replace(/[^a-z0-9._]/g,"");if(h.length>2)return h}return(reg.role==="scout"?"scout":"talent")+"_"+r}
-function finish(){user={role:reg.role,name:reg.name,age:reg.age||null,city:reg.city,ints:reg.ints||[],photo:reg.photo||null,bio:reg.bio||"",phone:reg.phone,email:reg.email,method:reg.method,handle:mkHandle(),loc:reg.loc||null,terms:reg.terms,joined:"נובמבר 2026",demo:false,item:reg.item||null};
+function finish(){user={role:reg.role,name:reg.name,age:reg.age||null,parent:reg.parent||null,city:reg.city,ints:reg.ints||[],photo:reg.photo||null,bio:reg.bio||"",phone:reg.phone,email:reg.email,method:reg.method,handle:mkHandle(),loc:reg.loc||null,terms:reg.terms,joined:"נובמבר 2026",demo:false,item:reg.item||null};
   saveUser();saveAcc(user);applyUser();toast(user.role==="scout"?"ברוכים הבאים לטאלנט, "+user.name+" 👋":"הכישרון שלכם באוויר 🎉 סקאוטים כבר יכולים למצוא אתכם")}
 
 /* ---------- the talent's listing, created during sign-up ---------- */
 const dlg=$("#dlg");let files=[];
 $("#f-c").replaceChildren(...cats.map(c=>el("option","",c)));$("#f-l").replaceChildren(...Object.keys(P).map(c=>el("option","",c)));$("#f-y").replaceChildren(...DAYS.map(c=>el("option","",c)));
+$("#f-c").onchange=()=>{$("#f-certw").hidden=!CERT.includes($("#f-c").value)};
 $("#f-f").onchange=()=>{const v=$("#f-f").value;$("#dayw").hidden=v==="חד־פעמי"||v==="פתוח כל השבוע"};
-function openPost(){files=[];$("#pf").reset();$("#dayw").hidden=true;$("#thumbs").replaceChildren();$("#f-go").disabled=true;if(reg.city)$("#f-l").value=reg.city;dlg.showModal()}
+function openPost(){files=[];$("#pf").reset();$("#f-certw").hidden=true;$("#dayw").hidden=true;$("#thumbs").replaceChildren();$("#f-go").disabled=true;if(reg.city)$("#f-l").value=reg.city;dlg.showModal()}
 $("#n-post").onclick=()=>openCreate();$("#f-x").onclick=()=>dlg.close();
 $("#f-m").onchange=e=>{files=[...e.target.files].slice(0,4);const t=$("#thumbs");t.replaceChildren();files.forEach(f=>t.append(art({src:URL.createObjectURL(f),vid:f.type.startsWith("video")})));$("#f-go").disabled=!files.length};
 $("#pf").onsubmit=e=>{e.preventDefault();const t=$("#f-t").value.trim(),p=+$("#f-p").value;if(!files.length||!t||!p){toast("חסרים תמונה, תיאור או מחיר");return}
+  if(p<50){toast("המחיר המינימלי בטאלנט הוא ₪50");$("#f-p").focus();return}
+  if(CERT.includes($("#f-c").value)&&!$("#f-cert").checked){toast("בתחום הזה צריך לאשר שיש לכם הסמכה מתאימה");return}
   const f=files[0];ownSrc=URL.createObjectURL(f);ownVid=f.type.startsWith("video");
-  reg.item={t,p,u:$("#f-u").value,cp:$("#f-cp").value,c:$("#f-c").value,loc:$("#f-l").value,f:$("#f-f").value,day:$("#dayw").hidden?"":$("#f-y").value,d:$("#f-d").value.trim()||t+"."};dlg.close();finish()};
+  reg.item={t,p,u:$("#f-u").value,cp:$("#f-cp").value,cert:CERT.includes($("#f-c").value)?"מוסמך/ת בתחום":"",c:$("#f-c").value,loc:$("#f-l").value,f:$("#f-f").value,day:$("#dayw").hidden?"":$("#f-y").value,d:$("#f-d").value.trim()||t+"."};dlg.close();finish()};
 
 /* ---------- swipe down to close every bottom sheet ---------- */
 function sheetSwipe(d){let y0=0,dy=0,on=false,drag=false,t0=0;
