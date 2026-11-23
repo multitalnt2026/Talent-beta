@@ -363,7 +363,7 @@ dialog.full{margin:0 auto;height:100dvh;max-height:100dvh;border-radius:0;backgr
 .sto .nm{max-width:70px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sto.add .ring{background:none;border:2px dashed var(--brand);padding:2px}
 .sto .pl{position:absolute;top:48px;left:4px;width:22px;height:22px;border-radius:50%;background:var(--cta);color:var(--on-cta);display:grid;place-items:center;font-weight:700;border:2px solid var(--paper);font-size:.9rem;line-height:1}
-#stv{background:#000;color:#fff}
+#stv{background:#000;color:#fff;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .sframe{position:relative;flex:1;overflow:hidden}
 .sframe .bgx{position:absolute;inset:0;display:grid;place-items:center;font-size:9rem}
 .sframe .bgx span{filter:drop-shadow(0 18px 30px rgba(0,0,0,.3))}
@@ -413,6 +413,7 @@ dialog.full{margin:0 auto;height:100dvh;max-height:100dvh;border-radius:0;backgr
 .quick .chip.slot{border-color:var(--brand);color:var(--brand);font-weight:500}
 .send .clip{background:none!important;color:var(--muted)!important;width:38px!important}
 .csearch{margin:0 1.25rem .4rem}
+.ckind{margin:.2rem 1.25rem .1rem}.ckind button{font-size:.92rem}.ckind .n{display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:10px;background:var(--cta);color:var(--on-cta);font-size:.7rem;font-weight:700;padding:0 5px;margin-inline-start:.35rem}
 .dealp{flex:none;font-size:.68rem;font-weight:700;border-radius:.4rem;padding:0 .4rem;background:var(--tint);color:var(--brand)}
 .dealp.done{background:#e5f4e4;color:#2c7a3a}
 .ci .top b{display:flex;align-items:center;gap:.4rem;min-width:0}
@@ -568,6 +569,7 @@ dialog.ios::backdrop{background:rgba(0,0,0,.35)}
   <div class="scroll hide-sb">
     <header class="page-h"><h1>צ׳אטים</h1><p id="chats-sub"></p></header>
     <label class="sfield csearch"><span id="c-qi"></span><span class="sr">חיפוש בצ׳אטים</span><input id="c-q" type="search" placeholder="חיפוש שיחה" autocomplete="off"></label>
+    <div class="seg2 ckind" id="ckind" role="group" aria-label="סוג השיחות" hidden><button data-k="sc" aria-pressed="true"></button><button data-k="tl" aria-pressed="false"></button></div>
     <div class="seg" role="group" aria-label="סינון שיחות"><button class="chip" aria-pressed="true" data-f="all">הכל</button><button class="chip" aria-pressed="false" data-f="un">לא נקראו</button><button class="chip" aria-pressed="false" data-f="deal">עסקאות פעילות</button></div>
     <div id="clist" class="clist"></div>
   </div>
@@ -1184,18 +1186,25 @@ function chatRow(name,av,about,t,onclick){const b=el("button","ci"+(t.un?" unrea
   top.append(nm,el("time","",t.time||""));last.append(el("span","",lastLine(t)));if(t.un)last.append(el("span","un",t.un));
   tx.append(top,el("div","about",about),last);b.append(av,tx);b.onclick=onclick;return b}
 let cf="all",cq="";
-function fillChats(){const box=$("#clist");if(!box)return;box.replaceChildren();const talent=user&&user.role==="talent",rows=[];
-  $("#chats-sub").textContent=talent?"פניות מסקאוטים. כאן סוגרים עסקאות.":"שיחות עם כישרונות. כאן סוגרים עסקאות.";
-  if(talent)CL.forEach(t=>rows.push({t,name:t.sc.n,av:()=>avatar(t.sc.n,t.sc.g),about:"סקאוט · "+t.sc.age+" · "+t.sc.city,open:()=>openClient(t)}));
-  [...TH.values()].filter(t=>t.m.length).forEach(t=>rows.push({t,name:t.x.n,av:()=>avatar(t.x.n,t.x.g+2),about:t.x.t,open:()=>openChat(t.x)}));
+/* talents see two separate inboxes: inquiries from scouts, and their own conversations with other talents */
+let ck="sc";
+function fillChats(){const box=$("#clist");if(!box)return;box.replaceChildren();const talent=user&&user.role==="talent",all=[];
+  CL.forEach(t=>all.push({k:"sc",t,name:t.sc.n,av:()=>avatar(t.sc.n,t.sc.g),about:"סקאוט · "+t.sc.age+" · "+t.sc.city,open:()=>openClient(t)}));
+  [...TH.values()].filter(t=>t.m.length).forEach(t=>all.push({k:"tl",t,name:t.x.n,av:()=>avatar(t.x.n,t.x.g+2),about:"כישרון · "+t.x.t,open:()=>openChat(t.x)}));
+  const kb=$("#ckind");kb.hidden=!talent;
+  if(talent){const cnt=k=>all.filter(r=>r.k===k).reduce((a,r)=>a+(r.t.un||0),0);
+    kb.querySelectorAll("button").forEach(b=>{const k=b.dataset.k,n=cnt(k);b.setAttribute("aria-pressed",k===ck);b.replaceChildren(k==="sc"?"פניות מסקאוטים":"שיחות עם כישרונות");if(n)b.append(el("span","n",n))})}
+  const rows=talent?all.filter(r=>r.k===ck):all.filter(r=>r.k==="tl");
+  $("#chats-sub").textContent=!talent?"שיחות עם כישרונות. כאן סוגרים עסקאות.":ck==="sc"?"סקאוטים שפנו אליכם. כאן סוגרים עסקאות.":"כישרונות שאתם פניתם אליהם, כמו כל לקוח.";
   const q=cq.trim();
-  if(!talent&&cf==="all"&&!q){const bot=el("button","ci"),av=el("div","av bot-av"),tx=el("div","tx"),top=el("div","top");av.innerHTML=svg("spark");top.append(el("b","","העוזר של טאלנט"));
+  if((!talent||ck==="tl")&&cf==="all"&&!q){const bot=el("button","ci"),av=el("div","av bot-av"),tx=el("div","tx"),top=el("div","top");av.innerHTML=svg("spark");top.append(el("b","","העוזר של טאלנט"));
     tx.append(top,el("div","about","עוזר אישי"),Object.assign(el("div","last"),{textContent:"ספרו לי מה אתם מחפשים, ואמצא את האדם הנכון"}));bot.append(av,tx);bot.onclick=()=>openBot();box.append(bot)}
   rows.filter(r=>(cf==="all"||(cf==="un"&&r.t.un)||(cf==="deal"&&(r.t.offered||r.t.booked)))&&(!q||(r.name+" "+r.about).includes(q))).forEach(r=>box.append(chatRow(r.name,r.av(),r.about,r.t,r.open)));
-  if(!box.children.length)box.append(el("p","empty",q?"לא נמצאו שיחות עם „"+q+"”.":"אין שיחות כאן כרגע."));
-  const u=rows.reduce((a,r)=>a+(r.t.un||0),0),bd=$("#n-chats .badge");if(bd){bd.textContent=u;bd.hidden=!u}}
+  if(!box.children.length||(talent&&ck==="tl"&&!rows.length&&!q&&cf==="all"))box.append(el("p","empty",q?"לא נמצאו שיחות עם „"+q+"”.":talent&&ck==="tl"?"עוד אין שיחות עם כישרונות אחרים. אפשר לפנות לכל כישרון מהגילוי.":"אין שיחות כאן כרגע."));
+  const u=(talent?all:rows).reduce((a,r)=>a+(r.t.un||0),0),bd=$("#n-chats .badge");if(bd){bd.textContent=u;bd.hidden=!u}}
 document.querySelectorAll("#chats .seg .chip").forEach(b=>b.onclick=()=>{cf=b.dataset.f;document.querySelectorAll("#chats .seg .chip").forEach(c=>c.setAttribute("aria-pressed",c===b));fillChats()});
 $("#c-q").oninput=e=>{cq=e.target.value;fillChats()};
+document.querySelectorAll("#ckind button").forEach(b=>b.onclick=()=>{ck=b.dataset.k;fillChats()});
 
 /* ---------- reels ---------- */
 const RL=[[10,"20 דקות לפני השקיעה, והמכתש מתחיל להחליף צבעים 🌄 מי בא איתנו בשישי?",12400,318],[4,"עוגת שלוש קומות לבת מצווה של רוני. 14 שעות עבודה, שווה כל דקה 🎂",8100,204],[1,"שבוע שלישי של שיעורים, ועידו כבר מנגן את השיר הראשון שלו 🎸",3200,87],[6,"הרגע שהכלי עולה על האובניים. אף פעם לא נמאס לי 🏺",5700,121],[14,"פגשנו להקה של דגי ליצן בעומק 4 מטר 🐠 צלילת היכרות ראשונה של דורון",9900,264],[11,"עצירה מספר 7: הבורקס שכולם מדברים עליו 🧆",6300,143],[9,"שעת הזהב בזכרון. משפחה אחת, 40 תמונות ואפס דמעות של ילדים 📷",4400,96]];
@@ -1405,6 +1414,26 @@ function resume(){const d=$("#stv");d.classList.remove("paused");clearTimeout(sv
 function nextFrame(){const g=sgList[sv.gi];if(!g)return;sv.fi++;if(sv.fi>=g.f.length){g.seen=true;sv.gi++;sv.fi=0}showFrame()}
 function prevFrame(){if(sv.fi>0)sv.fi--;else if(sv.gi>0){sv.gi--;sv.fi=0}showFrame()}
 $("#sv-next").onclick=nextFrame;$("#sv-prev").onclick=prevFrame;$("#sv-x").onclick=()=>$("#stv").close();
+/* like Instagram/TikTok: press and hold pauses, release continues; swipe down leaves the story */
+(function(){const d=$("#stv");let x0=0,y0=0,dy=0,on=false,held=false,drag=false,t0=0,ht=0,eat=false;
+  const skip=t=>t.closest(".sfoot,.shd");
+  const start=(x,y,t)=>{if(skip(t))return;on=true;held=drag=false;x0=x;y0=y;dy=0;t0=Date.now();clearTimeout(ht);ht=setTimeout(()=>{if(on&&!drag){held=true;pauseStory()}},180)};
+  const move=(x,y,ev)=>{if(!on)return;dy=y-y0;
+    if(!drag&&dy>12&&dy>Math.abs(x-x0)){drag=true;clearTimeout(ht);if(!held)pauseStory();d.style.transition="none"}
+    if(drag){if(ev&&ev.cancelable)ev.preventDefault();d.style.transform="translateY("+Math.max(0,dy)+"px) scale("+Math.max(.88,1-dy/1500)+")";d.style.opacity=String(Math.max(.5,1-dy/700))}};
+  const end=()=>{if(!on)return;on=false;clearTimeout(ht);
+    if(drag){eat=true;setTimeout(()=>eat=false,400);d.style.transition="transform .2s ease, opacity .2s ease";
+      if(dy>110||(dy>35&&dy/Math.max(1,Date.now()-t0)>.6)){d.style.transform="translateY(100%)";d.style.opacity="0";setTimeout(()=>{d.close();d.style.cssText=""},190)}
+      else{d.style.transform="";d.style.opacity="";setTimeout(()=>{d.style.transition=""},220);continueStory()}return}
+    if(held){eat=true;setTimeout(()=>eat=false,400);continueStory()}};
+  d.addEventListener("touchstart",e=>start(e.touches[0].clientX,e.touches[0].clientY,e.target),{passive:true});
+  d.addEventListener("touchmove",e=>move(e.touches[0].clientX,e.touches[0].clientY,e),{passive:false});
+  d.addEventListener("touchend",end);d.addEventListener("touchcancel",end);
+  d.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button===0)start(e.clientX,e.clientY,e.target)});
+  window.addEventListener("pointermove",e=>{if(e.pointerType==="mouse")move(e.clientX,e.clientY)});
+  window.addEventListener("pointerup",e=>{if(e.pointerType==="mouse")end()});
+  d.addEventListener("click",e=>{if(eat){e.stopPropagation();e.preventDefault();eat=false}},true);
+  d.addEventListener("contextmenu",e=>{if(!e.target.closest("input"))e.preventDefault()})})();
 $("#stv").addEventListener("close",()=>{clearTimeout(sv.tm);const g=sgList[sv.gi];if(g&&sv.fi>=g.f.length-1)g.seen=true;renderStories()});
 
 /* ---------- create a reel or a story (talents only) ---------- */
