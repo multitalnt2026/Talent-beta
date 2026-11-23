@@ -38,4 +38,5 @@ Talent is a Hebrew (RTL) marketplace app prototype in a single file, `index.html
 ## Versions so far
 
 - v1 https://claude.ai/artifact/4izUUqA3zdZSienS9thcn4 · v3 https://claude.ai/artifact/KyPhBFZcPWFohzmJa9fDmL · v4 https://claude.ai/artifact/8Cn8tfUuX4xza3pnPX8m3B
-- v5 (approved, current) https://claude.ai/artifact/Vu4c21krzPXQiRQDMwsQff · next draft = v6
+- v5 (approved, current) https://claude.ai/artifact/Vu4c21krzPXQiRQDMwsQff 
+- v6 (draft, waiting for approval) https://claude.ai/artifact/JtJ4XV5W6ZpcDKELcvBuFp — scratchpad path `versions/v6/index.html`
