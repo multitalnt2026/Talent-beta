@@ -617,7 +617,7 @@ dialog.ios::backdrop{background:rgba(0,0,0,.35)}
       <p class="logo">Talent<i></i></p>
       <h1>כישרונות אמיתיים.<br>קרוב אליכם.</h1>
       <p class="lede">שיעורים, אוכל ביתי, חוויות ויצירה מאנשים מוכשרים. גוללים, מתאהבים, וסוגרים בצ׳אט.</p>
-      <div class="feat"><span>🔒 תשלום בנאמנות</span><span>✓ ביקורות מאומתות</span><span>💬 צ׳אט ישיר</span><span>📍 לפי מיקום</span></div>
+      <div class="feat"><span>🔒 תשלום באפליקציה</span><span>✓ ביקורות מאומתות</span><span>💬 צ׳אט ישיר</span><span>📍 לפי מיקום</span></div>
       <div class="gfoot" style="padding-top:0">
         <button class="btn big" id="l-start">בואו נתחיל</button>
         <button class="btn ghost big" id="l-login">כבר יש לי חשבון</button>
@@ -755,6 +755,7 @@ dialog.ios::backdrop{background:rgba(0,0,0,.35)}
     <label for="f-t">מה אתם מציעים?</label><input id="f-t" required placeholder="למשל: עוגות יום הולדת בעבודת יד">
     <label for="f-p">מחיר התחלתי בשקלים</label><input id="f-p" type="number" min="0" required inputmode="numeric" placeholder="למשל 250">
     <label for="f-u">על מה המחיר?</label><select id="f-u"><option>לשיעור</option><option>לשעה</option><option>לאדם</option><option>למוצר</option><option>לפרויקט</option><option>לביקור</option><option>לסדנה</option></select>
+    <label for="f-cp">מדיניות ביטול</label><select id="f-cp"><option>ביטול חינם עד 24 שעות לפני. אחרי זה אין החזר.</option><option selected>ביטול חינם עד 48 שעות לפני. אחרי זה 50% החזר.</option><option>ביטול חינם עד 7 ימים לפני. אחרי זה 50% החזר.</option><option>אין ביטולים אחרי אישור ההצעה.</option></select>
     <label for="f-c">קטגוריה</label><select id="f-c"></select>
     <label for="f-l">איפה זה קורה?</label><select id="f-l"></select>
     <label for="f-f">באיזו תדירות?</label><select id="f-f"><option>חד־פעמי</option><option>פעם בשבוע</option><option>כל שבועיים</option><option>פעם בחודש</option><option>פתוח כל השבוע</option></select>
@@ -945,6 +946,8 @@ const D=[
 ].map((x,i)=>Object.assign({f:"חד־פעמי",day:"",g:i%6,i},x));
 const RVP=[["רותם ג.",5,"הגיע בדיוק בזמן, עבד נקי ומסודר. כבר המלצתי לחברים.","לפני שבוע"],["אסף ל.",5,"שווה כל שקל. התקשורת בצ׳אט הייתה מהירה וברורה.","לפני שבועיים"],["ענת ש.",4,"חוויה מעולה, רק התחלנו קצת באיחור. נחזור שוב.","לפני חודש"],["שקד מ.",5,"יחס אישי ממש, הרגשנו שאכפת לו מהתוצאה.","לפני 3 שבועות"],["מיכל ר.",5,"הילדים לא הפסיקו לדבר על זה כל הערב.","לפני 5 ימים"],["עידו ב.",4,"מקצועי מאוד. המחיר קצת גבוה אבל מוצדק.","לפני חודשיים"]];
 D.forEach(x=>{x.rv=[0,1,2].map(k=>RVP[(x.i*2+k)%RVP.length])});
+const CPOL={"טיולים":"ביטול חינם עד 72 שעות לפני. אחרי זה 50% החזר.","אוכל":"ביטול חינם עד 3 ימים לפני. אחרי זה אין החזר, כי המצרכים כבר נקנו.","מוזיקה":"ביטול או הזזה חינם עד 24 שעות לפני השיעור. אחרי זה השיעור מחויב.","יצירה":"ביטול חינם עד 48 שעות לפני. אחרי זה 50% החזר.","צילום":"ביטול חינם עד 7 ימים לפני. אחרי זה 50% החזר.","עיצוב":"ביטול חינם לפני תחילת העבודה. אחרי שליחת הסקיצות אין החזר.","תיקונים":"ביטול חינם עד שעתיים לפני הביקור."};
+const cpol=x=>x.cp||CPOL[x.c]||"ביטול חינם עד 48 שעות לפני. אחרי זה 50% החזר.";
 const sched=x=>x.f&&x.f!=="חד־פעמי"?(x.f==="פתוח כל השבוע"?x.f:x.f+(x.day?", יום "+x.day:"")):"";
 const ini=n=>n.split(/[\s־]/).filter(Boolean).slice(0,2).map(w=>w[0]).join("");
 const rt=x=>x.rc?"★ "+x.st.toFixed(1):"חדש";
@@ -1005,7 +1008,7 @@ function openDet(x){cur=x;const a=$("#d-art");const sh=el("button","heart sh");s
   const tg=$("#d-tags");tg.replaceChildren(el("span","tag",(CE[x.c]||"")+" "+x.c),el("span","tag","📍 "+x.loc));if(sched(x))tg.append(el("span","tag",sched(x)));
   $("#d-t").textContent=x.t;$("#d-av").replaceWith(Object.assign(avatar(x.n,x.g+2),{id:"d-av"}));$("#d-who").textContent=x.n;$("#d-resp").textContent=x.resp||"חדש בטאלנט";
   const f=$("#d-facts");f.replaceChildren();[[x.st?rt(x):"חדש","דירוג"],[x.dur||"גמיש","משך"],[x.rc?Math.round(x.rc*1.4)+"":"0","עסקאות"]].forEach(k=>{const d=el("div","fact");d.append(el("b","",k[0]),el("span","",k[1]));f.append(d)});
-  $("#d-d").textContent=x.d||"";$("#d-p").textContent=nis(x.p);$("#d-msg").textContent=x.own?"זה הכישרון שלכם":"שלחו הודעה";$("#d-msg").disabled=!!x.own;$("#d-u").textContent=x.u?"/ "+x.u:"";
+  $("#d-d").textContent=(x.d||"")+"\n\nמדיניות ביטול: "+cpol(x);$("#d-p").textContent=nis(x.p);$("#d-msg").textContent=x.own?"זה הכישרון שלכם":"שלחו הודעה";$("#d-msg").disabled=!!x.own;$("#d-u").textContent=x.u?"/ "+x.u:"";
   $("#rvf").hidden=true;x.rv.length?showRv():($("#d-st").textContent="עדיין אין ביקורות",$("#d-rv").replaceChildren());
   $("#det").showModal();$("#det .sbody").scrollTop=0}
 $("#d-x").onclick=()=>$("#det").close();
@@ -1066,7 +1069,7 @@ function intent(s,t){s=" "+s.replace(/[?!.,]/g," ")+" ";
   if(t&&t.slots&&t.slots.some(v=>s.includes(v)))return"slot";
   if(/הצעה נגדית|₪\s*\d|\d+\s*(₪|ש״ח|שקל)/.test(s))return"counter";
   if(/^\s*(היי|הי|שלום|אהלן|הלו|מה נשמע|בוקר טוב|ערב טוב)/.test(s))return"hi";
-  if(/ביט|מזומן|העברה בנקאית|פייבוקס|bit|paybox/i.test(s))return"bypass";
+  if(/(^|\s)ב?ביט(\s|$)|מזומן|העברה בנקאית|פייבוקס|\bbit\b|paybox/i.test(s))return"bypass";
   if(/הנחה|זול|יקר|מחיר מיוחד|פחות/.test(s))return"disc";
   if(/תשלום|לשלם|משלמים|אשראי|אפל פיי|apple pay|נאמנות/i.test(s))return"pay";
   if(/ביטול|לבטל|לדחות|לשנות מועד|להזיז/.test(s))return"cancel";
@@ -1097,9 +1100,9 @@ function persona(t,s){const x=t.x,Q=PER[x.c]||PER["יצירה"],k=intent(s,t),ou
     if(n>=t.price){T("סגור, אין בעיה 😉");out.push({offer:n})}
     else if(n>=Math.round(x.p*.85)){t.price=n;T("בסדר, "+gv(x,"מסכים","מסכימה")+" ל־"+nis(n)+". שלחתי הצעה מעודכנת:");out.push({offer:n})}
     else{const np=Math.round(x.p*.9/5)*5;t.price=np;T("זה קצת נמוך לי 🙏 הכי נמוך שאני "+gv(x,"יכול","יכולה")+" זה "+nis(np)+".");out.push({offer:np})}break}
-  case"bypass":T(gv(x,"אני מעדיף","אני מעדיפה")+" שנסגור דרך טאלנט 🙂 הכסף נשמר בנאמנות עד אחרי השירות, אז גם אתם מוגנים, ואני "+gv(x,"מקבל","מקבלת")+" ביקורת מאומתת.");break;
-  case"pay":T("משלמים כאן באפליקציה, ב־Apple Pay או באשראי. הכסף נשמר בנאמנות ומשתחרר אליי רק אחרי שהשירות ניתן.");break;
-  case"cancel":T("אפשר לבטל או להזיז בחינם עד 48 שעות לפני. אחרי זה מקבלים 50% החזר.");break;
+  case"bypass":T(gv(x,"אני מעדיף","אני מעדיפה")+" שנסגור דרך טאלנט 🙂 ככה, אם משהו לא יהיה תקין, אתם יכולים לפתוח דרישת פיצוי, ואני "+gv(x,"מקבל","מקבלת")+" ביקורת מאומתת.");break;
+  case"pay":T("משלמים כאן באפליקציה, ב־Apple Pay או באשראי. הכסף עובר אליי אחרי שאני "+gv(x,"מוסר","מוסרת")+" את השירות, ואם משהו לא תקין אפשר לפתוח דרישת פיצוי.");break;
+  case"cancel":T("מדיניות הביטול שלי: "+cpol(x)+" זה מופיע גם בכרטיס ההצעה.");break;
   case"thanks":T(t.booked?"בכיף! מחכה לראות אתכם"+(t.slot?" ב"+t.slot:"")+" 🙌":"בשמחה! רוצים שאשלח הצעה מסודרת?");break;
   default:T(t.booked?"אין בעיה, אני כאן לכל שאלה 🙂":t.offered?"בשמחה. אם משהו לא ברור בהצעה, תשאלו 🙂":"אשמח לעזור! "+x.d.split(".")[0]+". לאיזה תאריך חשבתם?")}
   return out}
@@ -1118,7 +1121,7 @@ function thr(x){if(!TH.has(x))TH.set(x,{x,m:[],un:0,time:"",offered:false,booked
  {i:4,time:"12.11",un:0,m:[["me","כמה עולה עוגה ל־20 איש בעיצוב של חד־קרן?","11:40"],["them","בערך ₪480, תלוי בכמות הקומות. יש לכם תמונה להשראה?","11:52"]]}
 ].forEach(c=>{const t=thr(D[c.i]);t.m=c.m.map(([w,tx,tm])=>({w,t:tx,tm}));t.un=c.un;t.time=c.time;t.day=c.time==="14:32"?"היום":c.time;
   if(c.offer){t.offered=true;t.slot=c.slot;t.m.push({w:"offer",p:c.offer,slot:c.slot,st:"open",tm:"19:10"})}
-  if(c.booked){t.offered=t.booked=true;t.slot=c.slot;t.m.push({w:"offer",p:c.booked,slot:c.slot,st:"ok",tm:"09:22"},{w:"sys",t:"שולם "+nis(c.booked)+" ב־Apple Pay · הכסף שמור בנאמנות עד אחרי השירות 🔒"})}});
+  if(c.booked){t.offered=t.booked=true;t.slot=c.slot;t.m.push({w:"offer",p:c.booked,slot:c.slot,st:"ok",tm:"09:22"},{w:"sys",t:"שולם "+nis(c.booked)+" ב־Apple Pay · הכסף עובר לכישרון אחרי מסירת השירות"})}});
 function seedClients(){const own=ownItem;
   CL=(user.demo?[
    {sc:{n:"אורן כהן",h:"oren.k",gd:"m",age:34,city:"תל אביב",ints:["מוזיקה","טיולים","אוכל"],g:3,joined:"אוקטובר 2026"},time:"10:05",un:1,m:[{w:"them",t:"היי, אני מתחיל מאפס בגיל 34. זה לא מאוחר מדי?",tm:"10:01"},{w:"me",t:"ממש לא! רוב התלמידים שלי מבוגרים. יש לי מקום ביום ראשון בערב.",tm:"10:03"},{w:"them",t:"מעולה, כמה עולה שיעור?",tm:"10:05"}]},
@@ -1133,12 +1136,12 @@ function bubble(m){if(m.w==="offer")return offerCard(m);
   if(m.w!=="sys")d.append(el("span","tm",m.tm||""));return d}
 function offerCard(m){const mine=!!ct.client,x=ct.client?ownItem:ct.x,o=el("div","offer"+(mine?" mine":""));
   o.append(el("h4","",mine?"ההצעה שלכם ל"+fnm(ct.sc):"הצעה מ"+x.n),el("p","big",nis(m.p)+(x.u?" "+x.u:"")));
-  const ul=el("ul");["שירות: "+x.t,m.slot?"מועד: "+m.slot:(sched(x)?"תדירות: "+sched(x):"מועד: נתאם בצ׳אט"),"תשלום מאובטח בנאמנות עד אחרי השירות"].forEach(s=>ul.append(el("li","",s)));o.append(ul);
+  const ul=el("ul");["שירות: "+x.t,m.slot?"מועד: "+m.slot:(sched(x)?"תדירות: "+sched(x):"מועד: נתאם בצ׳אט"),"ביטול: "+cpol(x),"הכסף עובר "+(mine?"אליכם":"לכישרון")+" אחרי מסירת השירות"].forEach(s=>ul.append(el("li","",s)));o.append(ul);
   if(m.st==="ok"){o.append(el("p","done","✓ אושר ושולם"));return o}
   if(m.st==="old"){o.append(el("p","pay","הוחלפה בהצעה חדשה"));o.style.opacity=".55";return o}
   if(mine){o.append(el("p","pay","⏳ מחכה לאישור של "+fnm(ct.sc)));return o}
   const r=el("div","row"),ok=el("button","btn","אישור ותשלום"),no=el("button","btn ghost","הצעה נגדית");
-  ok.onclick=()=>acceptOffer(ct,m);no.onclick=()=>{$("#msg").value="הצעה נגדית: ₪";$("#msg").focus()};r.append(ok,no);o.append(r,el("p","pay","🔒 Apple Pay או אשראי · הכסף נשמר בנאמנות"));return o}
+  ok.onclick=()=>acceptOffer(ct,m);no.onclick=()=>{$("#msg").value="הצעה נגדית: ₪";$("#msg").focus()};r.append(ok,no);o.append(r,el("p","pay","🔒 Apple Pay או אשראי · אם משהו לא תקין, אפשר לפתוח דרישת פיצוי"));return o}
 const chatOpen=t=>ct===t&&$("#app").dataset.view==="chat";
 function renderThread(){const log=$("#log");log.replaceChildren(el("div","day",ct.day||"היום"));ct.m.forEach(m=>log.append(bubble(m)));log.scrollTop=log.scrollHeight;renderQuick()}
 function push(t,m){m.tm=m.tm||tnow();t.m.push(m);t.time=m.tm;if(chatOpen(t)){const b=bubble(m);$("#log").append(b);b.scrollIntoView({block:"end"});renderQuick()}else{t.un++;fillChats()}}
@@ -1146,19 +1149,22 @@ function typing(log){const t=el("div","m them typing");t.append(el("i"),el("i"),
 function reply(t,msgs){if(!msgs.length)return;const ty=chatOpen(t)?typing($("#log")):null,first=msgs[0],delay=Math.min(1700,650+((first.t||"").length*16));
   setTimeout(()=>{if(ty)ty.remove();const m=msgs.shift();if(m.offer)sendOffer(t,m.offer,m.slot);else push(t,m);if(msgs.length)reply(t,msgs)},delay)}
 function sendOffer(t,p,slot){t.m.forEach(q=>{if(q.w==="offer"&&q.st==="open")q.st="old"});t.offered=true;t.price=p;if(chatOpen(t))renderThread();push(t,{w:"offer",p,slot:slot||t.slot,st:"open"});fillChats()}
-function acceptOffer(t,m){m.st="ok";t.booked=true;renderThread();push(t,{w:"sys",t:"שולם "+nis(m.p)+" ב־Apple Pay · הכסף שמור בנאמנות עד אחרי השירות 🔒"});fillChats();
+function acceptOffer(t,m){m.st="ok";t.booked=true;renderThread();push(t,{w:"sys",t:"שולם "+nis(m.p)+" ב־Apple Pay · הכסף עובר ל"+fnm(t.x)+" אחרי מסירת השירות"});fillChats();
   reply(t,[{w:"them",t:"יש! קיבלתי את האישור 🙌 "+(m.slot?"נתראה ב"+m.slot+".":"נתאם כאן את המועד המדויק.")+" אם יש שאלה, אני כאן."}])}
 function autoAccept(t){setTimeout(()=>{const m=[...t.m].reverse().find(q=>q.w==="offer"&&q.st==="open");if(!m)return;m.st="ok";t.booked=true;if(chatOpen(t))renderThread();
-  push(t,{w:"sys",t:fnm(t.sc)+" "+gv(t.sc,"אישר ושילם","אישרה ושילמה")+" "+nis(m.p)+" · הכסף שמור בנאמנות ומשתחרר אליכם 24 שעות אחרי השירות 🔒"});reply(t,[{w:"them",t:"מעולה, תודה! מחכה לזה 🙏"}])},1800)}
+  push(t,{w:"sys",t:fnm(t.sc)+" "+gv(t.sc,"אישר ושילם","אישרה ושילמה")+" "+nis(m.p)+" · הכסף עובר אליכם אחרי מסירת השירות"});reply(t,[{w:"them",t:"מעולה, תודה! מחכה לזה 🙏"}])},1800)}
 function say(s){s=(s||"").trim();if(!s||!ct)return;const t=ct;push(t,{w:"me",t:s});reply(t,t.client?clientReply(t,s):persona(t,s))}
 function renderQuick(){const q=$("#quick");q.replaceChildren();if(!ct)return;let l;
   if(ct.client)l=ct.booked?["תודה רבה! נתראה 🙏","אשלח תזכורת יום לפני"]:["📄 שליחת הצעת מחיר","מתי נוח לך?","תודה על הפנייה!"];
   else if(ct.slots&&!ct.booked&&!ct.slot)l=ct.slots.map(v=>({v,slot:1}));
-  else if(ct.booked)l=["תודה! 🙏","מה מדיניות הביטול?","אפשר לשלם בביט?"];
+  else if(ct.booked)l=["תודה! 🙏","מה מדיניות הביטול?",ct.claim?null:{v:"⚠️ דרישת פיצוי",claim:1}].filter(Boolean);
   else if(ct.offered)l=["אפשר הנחה?","מתי יש מקום?","איך משלמים?"];
   else l=["כמה זה עולה?","מתי יש מקום?","איפה זה?","אפשר לראות עבודות?"];
   l.forEach(v=>{const o=typeof v==="string"?{v}:v,c=el("button","chip"+(o.slot?" slot":""),o.v);c.type="button";
-    c.onclick=()=>{if(o.v.startsWith("📄")){sendOffer(ct,ownItem.p,"");autoAccept(ct)}else say(o.v)};q.append(c)})}
+    c.onclick=()=>{if(o.claim)openClaim(ct);else if(o.v.startsWith("📄")){sendOffer(ct,ownItem.p,"");autoAccept(ct)}else say(o.v)};q.append(c)})}
+function openClaim(t){t.claim=true;push(t,{w:"me",t:"פתחתי דרישת פיצוי: השירות לא ניתן כמו שסיכמנו."});
+  push(t,{w:"sys",t:"נפתחה דרישת פיצוי. "+fnm(t.x)+" "+gv(t.x,"קיבל","קיבלה")+" הודעה ויכול להציע פתרון. אם לא תגיעו להסכמה, צוות טאלנט יבדוק ויכריע."});
+  reply(t,[{w:"them",t:"מצטער"+gv(t.x,"","ת")+" לשמוע 🙏 ספרו לי מה לא היה תקין, ונמצא פתרון: תיקון, מועד נוסף או החזר חלקי."}])}
 function head(name,node,sub,onWho){$("#cn").textContent=name;$("#ct").textContent=sub;node.id="c-av";node.classList.add("sm","dot-on");$("#c-av").replaceWith(node);$("#c-who").onclick=onWho}
 function openChat(x,opt){if(x.own){toast("זה הכישרון שלכם 🙂");return}const t=thr(x);ct=t;t.un=0;
   head(x.n,avatar(x.n,x.g+2),gv(x,"פעיל","פעילה")+" עכשיו · "+(x.resp||""),()=>openDet(x));
@@ -1351,7 +1357,7 @@ function blog(cls,t){const m=el("div","m "+cls,t);$("#blog").append(m);m.scrollI
 function bcard(x){const b=el("button","bcard"),th=el("div","th");th.append(art(x));const tx=el("div");tx.append(el("b","",x.t),el("small","",x.n+" · ★ "+x.st.toFixed(1)+" · "+nis(x.p)+" "+x.u));b.append(th,tx);b.onclick=()=>openDet(x);$("#blog").append(b);b.scrollIntoView({block:"end"})}
 function think(q){const s=q.replace(/[״"']/g,"");
   if(/לפרסם|פרסום|מפרסמ|למכור|להציע/.test(s))return{t:"פשוט מאוד: כישרונות מעלים את הכישרון כבר בהרשמה, ואחר כך מוסיפים רילס וסטוריז מה־＋ הכתום. סקאוטים לא מפרסמים: הם גוללים, שומרים ופונים בצ׳אט.",act:user&&user.role==="talent"?["יצירת רילס או סטורי",()=>{$("#bot").close();openCreate()}]:null};
-  if(/עמלה|תשלום|לשלם|נאמנות|בטוח|מאובטח/.test(s))return{t:"הכסף נשמר בחשבון נאמנות ומשתחרר לנותן השירות רק אחרי שהשירות ניתן. טאלנט גובה עמלה של 5% מכל עסקה, ואת הכול מתאמים ומאשרים דרך כרטיס הצעה בצ׳אט."};
+  if(/עמלה|תשלום|לשלם|נאמנות|בטוח|מאובטח/.test(s))return{t:"משלמים באפליקציה, והכסף עובר לכישרון אחרי שהשירות נמסר. אם משהו לא תקין, אפשר לפתוח דרישת פיצוי מהצ׳אט. לכל כישרון מדיניות ביטול משלו, שמופיעה בעמוד שלו. טאלנט גובה עמלה של 5% מכל עסקה."};
   if(/מפה|קרוב|לידי|באזור/.test(s))return{t:"הכי נוח לראות את זה על המפה. כל נקודה היא שירות, הכתומות הן טיולים וחוויות.",act:["פתחו מפה",()=>{$("#bot").close();openMap()}]};
   const bud=(s.replace(/,/g,"").match(/\d{2,5}/)||[])[0];const budget=bud?+bud:0;
   let reg="";for(const k in REG)if(s.includes(k.slice(1))||s.includes(k))reg=k;
@@ -1540,8 +1546,8 @@ function renderMine(){const b=$("#mine-body");if(!b||!user||user.role!=="talent"
   pl.append(el("p","","השבוע:"),ms);const v=el("button","btn ghost","איך סקאוטים רואים אותי");v.onclick=()=>openDet(x);const cr=el("button","btn","＋ רילס או סטורי");cr.onclick=()=>openCreate();pl.append(cr,v);b.append(pl);
   const ct2=el("div","box");ct2.append(el("h3","","התוכן שלי"),el("p","",myReels+" רילס · "+myStories.length+" סטוריז פעילים"),el("p","","סטורי מופיע בראש מסך הגילוי ל־24 שעות. רילס נשאר בלשונית הרילס ובפרופיל."));b.append(ct2);
   const inq=el("button","btn soft","פניות מסקאוטים ("+CL.length+")");inq.style.cssText="width:calc(100% - 2rem);margin:0 1rem .85rem";inq.onclick=()=>go("chats");b.append(inq);
-  if(demo){const s=el("div","plan");s.innerHTML='<h2>סיכום נובמבר</h2><div class="kv"><span>18 שיעורים × ₪150</span><b>₪2,700</b></div><div class="kv"><span>עמלת טאלנט 5%</span><b>−₪135</b></div><div class="kv"><span>נטו להעברה</span><b style="color:var(--brand)">₪2,565</b></div><p style="font-size:.8rem;margin-top:.5rem">התשלום משתחרר מחשבון הנאמנות 24 שעות אחרי כל שיעור.</p>';b.append(s)}
-  const p1=el("div","plan");p1.innerHTML='<h2>המסלול שלי: טאלנט מתחיל</h2><ul><li>כישרון אחד עם תמונה או סרטון</li><li>רילס וסטוריז</li><li>צ׳אט והצעות עם כרטיס הצעה</li><li>תשלום מאובטח בחשבון נאמנות</li><li>ביקורות מאומתות ופרופיל חנות</li></ul>';b.append(p1);
+  if(demo){const s=el("div","plan");s.innerHTML='<h2>סיכום נובמבר</h2><div class="kv"><span>18 שיעורים × ₪150</span><b>₪2,700</b></div><div class="kv"><span>עמלת טאלנט 5%</span><b>−₪135</b></div><div class="kv"><span>נטו להעברה</span><b style="color:var(--brand)">₪2,565</b></div><p style="font-size:.8rem;margin-top:.5rem">התשלום עובר אליכם אחרי כל שיעור שנמסר.</p>';b.append(s)}
+  const p1=el("div","plan");p1.innerHTML='<h2>המסלול שלי: טאלנט מתחיל</h2><ul><li>כישרון אחד עם תמונה או סרטון</li><li>רילס וסטוריז</li><li>צ׳אט והצעות עם כרטיס הצעה</li><li>תשלום באפליקציה, ודרישת פיצוי ללקוח אם משהו לא תקין</li><li>ביקורות מאומתות ופרופיל חנות</li></ul>';b.append(p1);
   const p2=el("div","plan");p2.innerHTML='<h2>אפשר לשדרג</h2><p><b>טאלנט מתקדם:</b> קידום פרסום, הצגת תוצרים, ביקורות מודגשות, קישורים לרשתות, מעקב עסקאות ותזרים.</p><p><b>טאלנט מולטי:</b> כמה כישרונות בפרופיל אחד, עם כל כלי המתקדם.</p>';const up=el("button","btn ghost","לשדרוג המסלול");up.onclick=()=>toast("בגרסה האמיתית נמשיך לבחירת מסלול ותשלום");p2.append(up,el("p","","מחירי המסלולים עוד לא נקבעו."));b.append(p2);
   b.append(setBlock(),el("p","note","עמלת 5% מכל עסקה נגבית בכל המסלולים, והיא לא חלק מהחבילה."))}
 
@@ -1608,9 +1614,9 @@ function otpReset(){const o=$("#otp");o.replaceChildren();for(let k=0;k<6;k++){c
 $("#go-re").onclick=()=>{otpReset();toast("שלחנו קוד חדש")};
 function otpOk(){$("#go-err").textContent="";$("#go-t").textContent="מאמתים…";clearInterval(otpT);setTimeout(()=>{setupTerms();gshow("g-terms")},700)}
 function setupTerms(){const s=reg.role==="scout",box=$("#gt-box");box.replaceChildren();
-  const T=[["חשבון מאומת","החשבון אישי ומאומת בטלפון. אחד לכל אדם."],["תשלומים רק באפליקציה","הכסף נשמר בנאמנות עד שהשירות ניתן. עסקה שנסגרת מחוץ לאפליקציה לא מוגנת."],["ביקורות מאומתות","רק מי שסגר עסקה יכול לדרג."],["פרטיות","הטלפון והמייל לא מוצגים לאף משתמש. כישרונות רואים רק שם פרטי, תמונה, גיל, עיר ותחומי עניין של סקאוט."],["כבוד הדדי","בלי הטרדות, ספאם או תוכן פוגעני. אפשר לדווח מכל צ׳אט."]];
-  (s?[["מה סקאוטים עושים","גוללים, עושים לייק, מגיבים, שומרים ופונים לכישרונות. סקאוטים לא מפרסמים תוכן."],["ביטולים","עד 48 שעות לפני השירות מקבלים החזר מלא, אלא אם הכישרון הגדיר אחרת."],["גיל","מגיל 16. עסקה מעל ₪500 מגיל 18."]]
-    :[["עמלה","5% מכל עסקה, בכל המסלולים."],["אחריות","אתם מתחייבים לעמוד בהזמנות שאישרתם ולתאר את השירות בכנות."],["אישור תוכן","100 הכישרונות הראשונים מאושרים ידנית. אחר כך בדיקה אוטומטית, ובדיקה אנושית במקרים מורכבים."],["תשלום אליכם","משתחרר 24 שעות אחרי שהשירות ניתן, לחשבון הבנק שתגדירו."],["מיסוי","דיווח על ההכנסות לרשויות באחריותכם."]]).concat(T).forEach(([h,p])=>box.append(el("h3","",h),el("p","",p)));
+  const T=[["חשבון מאומת","החשבון אישי ומאומת בטלפון. אחד לכל אדם."],["תשלומים רק באפליקציה","הכסף עובר לכישרון אחרי מסירת השירות. אם משהו לא תקין, הלקוח יכול לפתוח דרישת פיצוי. עסקה שנסגרת מחוץ לאפליקציה לא מוגנת."],["תיווך בלבד","טאלנט מתווכת בין כישרונות ללקוחות. אין בין טאלנט לכישרונות יחסי עובד ומעביד, וטאלנט לא קובעת מחירים, שעות או כללי עבודה."],["שירותים אסורים","אסור להציע או לרכוש שירות לא חוקי, וטאלנט לא אחראית לשירות כזה. חשבון שמפר את התקנון ייסגר."],["מחלוקות","טאלנט מתערבת במחלוקת רק כשחייבים, ויכולה להשעות חשבון ותשלומים עד שהמחלוקת נפתרת."],["מדיניות ביטול","לכל כישרון מדיניות ביטול משלו, שמופיעה בעמוד שלו ובכרטיס ההצעה. האפליקציה פועלת לפיה."],["ביקורות מאומתות","רק מי שסגר עסקה יכול לדרג."],["פרטיות","הטלפון והמייל לא מוצגים לאף משתמש. כישרונות רואים רק שם פרטי, תמונה, גיל, עיר ותחומי עניין של סקאוט."],["כבוד הדדי","בלי הטרדות, ספאם או תוכן פוגעני. אפשר לדווח מכל צ׳אט."]];
+  (s?[["מה סקאוטים עושים","גוללים, עושים לייק, מגיבים, שומרים ופונים לכישרונות. סקאוטים לא מפרסמים תוכן."],["גיל","מגיל 16. עסקה מעל ₪500 מגיל 18."]]
+    :[["עמלה","5% מכל עסקה, בכל המסלולים."],["אחריות","אתם מתחייבים לעמוד בהזמנות שאישרתם ולתאר את השירות בכנות."],["אישור תוכן","100 הכישרונות הראשונים מאושרים ידנית. אחר כך בדיקה אוטומטית, ובדיקה אנושית במקרים מורכבים."],["תשלום אליכם","עובר אחרי מסירת השירות, לחשבון הבנק שתגדירו. בזמן מחלוקת פתוחה התשלום יכול להיות מושהה."],["מדיניות הביטול שלכם","אתם קובעים אותה כשאתם מעלים את הכישרון, והיא מחייבת אתכם ואת הלקוח."],["מיסוי","דיווח על ההכנסות לרשויות באחריותכם."]]).concat(T).forEach(([h,p])=>box.append(el("h3","",h),el("p","",p)));
   const ch=$("#gt-checks");ch.replaceChildren();const req=s?["קראתי ואני מסכים/ה לתקנון ולמדיניות הפרטיות"]:["קראתי ואני מסכים/ה לתקנון ולמדיניות הפרטיות","אני מצהיר/ה שהפרטים נכונים ושאעמוד בהזמנות שאאשר","ידוע לי שטאלנט גובה עמלה של 5% מכל עסקה"];
   const all=[...req.map(t=>[t,1]),[s?"אשמח לקבל במייל המלצות על כישרונות חדשים":"אשמח לקבל טיפים לקידום הכישרון",0]];
   all.forEach(([t,r])=>{const l=el("label","check"),i=el("input");i.type="checkbox";if(r)i.dataset.req="1";l.append(i,el("span","",t+(r?"":" (לא חובה)")));ch.append(l);i.onchange=()=>{$("#gt-go").disabled=![...ch.querySelectorAll("[data-req]")].every(q=>q.checked)}});$("#gt-go").disabled=true}
@@ -1640,7 +1646,7 @@ $("#n-post").onclick=()=>openCreate();$("#f-x").onclick=()=>dlg.close();
 $("#f-m").onchange=e=>{files=[...e.target.files].slice(0,4);const t=$("#thumbs");t.replaceChildren();files.forEach(f=>t.append(art({src:URL.createObjectURL(f),vid:f.type.startsWith("video")})));$("#f-go").disabled=!files.length};
 $("#pf").onsubmit=e=>{e.preventDefault();const t=$("#f-t").value.trim(),p=+$("#f-p").value;if(!files.length||!t||!p){toast("חסרים תמונה, תיאור או מחיר");return}
   const f=files[0];ownSrc=URL.createObjectURL(f);ownVid=f.type.startsWith("video");
-  reg.item={t,p,u:$("#f-u").value,c:$("#f-c").value,loc:$("#f-l").value,f:$("#f-f").value,day:$("#dayw").hidden?"":$("#f-y").value,d:$("#f-d").value.trim()||t+"."};dlg.close();finish()};
+  reg.item={t,p,u:$("#f-u").value,cp:$("#f-cp").value,c:$("#f-c").value,loc:$("#f-l").value,f:$("#f-f").value,day:$("#dayw").hidden?"":$("#f-y").value,d:$("#f-d").value.trim()||t+"."};dlg.close();finish()};
 
 /* ---------- swipe down to close every bottom sheet ---------- */
 function sheetSwipe(d){let y0=0,dy=0,on=false,drag=false,t0=0;
