@@ -40,6 +40,7 @@ Talent is a Hebrew (RTL) marketplace app prototype in a single file, `index.html
 - v1 https://claude.ai/artifact/4izUUqA3zdZSienS9thcn4 · v3 https://claude.ai/artifact/KyPhBFZcPWFohzmJa9fDmL · v4 https://claude.ai/artifact/8Cn8tfUuX4xza3pnPX8m3B
 - v5 https://claude.ai/artifact/Vu4c21krzPXQiRQDMwsQff
 - v6 https://claude.ai/artifact/JtJ4XV5W6ZpcDKELcvBuFp (code at f42b964)
-- v7 (approved, current) https://claude.ai/artifact/TARdfLtcSh21eYWjGkWKp3. Do NOT republish `versions/v7/index.html`.
-- v8 (draft, waiting for approval) https://claude.ai/artifact/5c8hXzKtexVWqZ9T6HMP5P — scratchpad path `versions/v8/index.html`
+- v7 https://claude.ai/artifact/TARdfLtcSh21eYWjGkWKp3. Do NOT republish `versions/v7/index.html`.
+- v8 (approved, current) https://claude.ai/artifact/5c8hXzKtexVWqZ9T6HMP5P. Do NOT republish `versions/v8/index.html`.
+- Round 9 (13-section spec, see SPEC.md) is committed locally only; the owner asked to be asked before any push, publish (v9) or workspace update.
 - Before republishing any draft path, re-read `versions` first: the owner may have approved it in the meantime, and then the changes go to the next version.
