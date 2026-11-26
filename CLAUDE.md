@@ -43,4 +43,5 @@ Talent is a Hebrew (RTL) marketplace app prototype in a single file, `index.html
 - v7 https://claude.ai/artifact/TARdfLtcSh21eYWjGkWKp3. Do NOT republish `versions/v7/index.html`.
 - v8 https://claude.ai/artifact/5c8hXzKtexVWqZ9T6HMP5P. Do NOT republish `versions/v8/index.html`.
 - v9 (approved, current) https://claude.ai/artifact/GTLkzofQvHm88VZvvE2c2r. Round 9 = the 13-section spec in SPEC.md. On 26.11 the owner explicitly asked to republish it in place with the iPhone fixes from v9.1 (https://claude.ai/artifact/EM9KcqHiKeDbR2HccZSvkg: `<style id="iphone-fix">` and `<script id="iphone-fix-js">`). Otherwise do NOT republish `versions/v9/index.html`; the next round is v10 on a new artifact.
+- v10 (draft, waiting for approval) https://claude.ai/artifact/HwPnUtNCH4sgvCkYcfmuhR — scratchpad path `versions/v10/index.html`. Round 10 = dedicated screens, catalog/coupon forms, map, stories order, reels favorites (SPEC.md).
 - Before republishing any draft path, re-read `versions` first: the owner may have approved it in the meantime, and then the changes go to the next version.
