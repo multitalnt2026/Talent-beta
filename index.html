@@ -543,6 +543,7 @@ dialog.ios::backdrop{background:rgba(0,0,0,.35)}
 /* round 9: fees, deals, plans, locks, reports, partner scouts */
 .osum{margin:.35rem 0 .2rem;padding:.45rem .7rem;background:var(--paper);border-radius:.9rem}.osum .kv{font-size:.88rem;padding:.25rem 0}.osum .kv.tot{border-top:1px solid var(--line);border-bottom:0;margin-top:.15rem;padding-top:.4rem}.osum .kv.tot b{color:var(--brand);font-size:1rem}
 .oopt{display:grid;gap:.45rem;margin-top:.55rem;font-size:.88rem}.oopt label{display:flex;align-items:center;gap:.5rem;min-height:44px}.oopt input[type=checkbox]{width:22px;height:22px;accent-color:var(--brand)}.oopt select{min-height:44px;border:1px solid var(--line);border-radius:.8rem;background:var(--paper);padding:0 .6rem;color:inherit;font:inherit;flex:1}
+.oopt label{min-width:0}.oopt select{min-width:0;width:100%}
 .m.sys.deal{border:0;cursor:pointer;min-height:44px;text-decoration:underline;text-underline-offset:3px;font:inherit;font-weight:500;font-size:.85rem}
 .m.bot{background:var(--card);border:1.5px solid var(--brand)}.m.bot .bl{display:block;font-size:.75rem;font-weight:700;color:var(--brand);margin-bottom:.15rem}
 .lock{display:flex;align-items:center;gap:.6rem;width:100%;min-height:48px;background:var(--paper);border:1px dashed var(--line);border-radius:1rem;padding:.55rem .85rem;color:var(--muted);text-align:start;font:inherit;font-size:.9rem;margin:.35rem 0}.lock b{color:var(--ink);font-weight:500}.lock small{display:block;color:var(--brand);font-weight:500}
@@ -753,8 +754,9 @@ dialog:focus{outline:none}
     <div class="gtop"><button class="icon-btn gback" aria-label="חזרה"></button></div>
     <h1 id="gr-h">איך תרצו להשתמש בטאלנט?</h1>
     <p class="lede">אפשר להיות כישרון או סקאוט. בוחרים אחד, ומתחילים.</p>
-    <button class="rolec" data-role="scout" aria-pressed="false"><span class="ic" style="background:linear-gradient(145deg,#bfece7,#4fb8b0)">🔍</span><span><b>אני סקאוט</b><small>מגלה כישרונות, עושה לייק, שומר ומזמין.</small><ul><li>פיד, רילס וסטוריז מותאמים לכם</li><li>צ׳אט ישיר עם כישרונות וסגירת עסקאות</li></ul></span></button>
+    
     <button class="rolec" data-role="talent" aria-pressed="false"><span class="ic" style="background:linear-gradient(145deg,#ffd3c4,#ff8f73)">✨</span><span><b>אני כישרון</b><small>מציע שירות או מוצר, ומרוויח ממה שאני אוהב לעשות.</small><ul><li>חנות אישית, רילס וסטוריז</li><li>פניות מסקאוטים ותשלום מאובטח</li></ul></span></button>
+    <button class="rolec" data-role="scout" aria-pressed="false"><span class="ic" style="background:linear-gradient(145deg,#bfece7,#4fb8b0)">🔍</span><span><b>אני סקאוט</b><small>מגלה כישרונות, עושה לייק, שומר ומזמין.</small><ul><li>פיד, רילס וסטוריז מותאמים לכם</li><li>צ׳אט ישיר עם כישרונות וסגירת עסקאות</li></ul></span></button>
     <div class="gfoot"><button class="btn big" id="gr-go" disabled>המשך</button></div>
   </section>
 
@@ -1339,7 +1341,7 @@ function bubble(m){if(m.w==="offer")return offerCard(m);
 function offerCard(m){const mine=!!ct.client,x=ct.client?ownItem:ct.x,o=el("div","offer"+(mine?" mine":""));
   const base=offBase(m),f=fee(base),tot=mine?base-f:base+f;
   o.append(el("h4","",mine?"ההצעה שלכם ל"+fnm(ct.sc):"הצעה מ"+x.n),el("p","big",nis(m.p)+(x.u&&!m.item?" "+x.u:"")));
-  const ul=el("ul");[m.item?"פריט מהקטלוג: "+m.item:"שירות: "+x.t,m.slot?"מועד: "+m.slot:(sched(x)?"תדירות: "+sched(x):"מועד: נתאם בצ׳אט"),"ביטול: "+cpol(x)].forEach(s=>ul.append(el("li","",s)));
+  const ul=el("ul");[m.item?"פריט מהקטלוג: "+m.item:"שירות: "+x.t,m.slot?"מועד: "+m.slot:(sched(x)&&!m.item?"תדירות: "+sched(x):"מועד: נתאם בצ׳אט"),"ביטול: "+cpol(x)].forEach(s=>ul.append(el("li","",s)));
   if(m.rec)ul.append(el("li","","🔁 חיוב שבועי קבוע: 4 מפגשים נכנסים ליומן"));o.append(ul);
   const sum=el("div","osum"),kv=(a,b,c)=>{const r=el("div","kv"+(c?" "+c:""));r.append(el("span","",a),el("b","",b));sum.append(r)};
   kv("מחיר",nis(m.p));if(m.cd)kv("קופון "+m.code+" ("+m.cd+"%)","−"+nis(m.p-base));
@@ -1348,8 +1350,10 @@ function offerCard(m){const mine=!!ct.client,x=ct.client?ownItem:ct.x,o=el("div"
   if(m.st==="ok"){o.append(el("p","done","✓ אושר ושולם"));return o}
   if(m.st==="old"){o.append(el("p","pay","הוחלפה בהצעה חדשה"));o.style.opacity=".55";return o}
   if(mine){const op=el("div","oopt");
-    if(x.f&&x.f!=="חד־פעמי"){if(has("pro")){const l=el("label"),c=el("input");c.type="checkbox";c.checked=!!m.rec;c.onchange=()=>{m.rec=c.checked;renderThread()};l.append(c,"חיוב שבועי קבוע");op.append(l)}else op.append(lock("pro","חיוב שבועי קבוע"))}
-    if(has("pro")){if(CPN.some(c=>!c.scope)){const l=el("label"),sl=el("select");sl.setAttribute("aria-label","קופון להצעה");sl.append(Object.assign(el("option","","בלי קופון"),{value:""}),...CPN.filter(c=>!c.scope).map(c=>Object.assign(el("option","",c.code+" · "+c.pct+"% הנחה"),{value:c.code})));sl.value=m.code||"";
+    if(has("adv")&&(user.shop||[]).length){const l=el("label"),si=el("select");si.setAttribute("aria-label","על מה ההצעה");si.append(Object.assign(el("option","",ownItem.t+" · "+nis(ownItem.p)),{value:""}),...user.shop.map(it=>Object.assign(el("option","","🛍️ "+it.n+" · "+nis(it.p)),{value:it.n})));si.value=m.item||"";
+      si.onchange=()=>{const it=user.shop.find(q=>q.n===si.value);m.item=it?it.n:undefined;m.p=it?it.p:ownItem.p;if(it)m.rec=false;const c=CPN.find(q=>q.code===m.code);if(c&&c.scope&&c.scope!==m.item){m.code="";m.cd=0}renderThread()};l.append("📦",si);op.append(l)}
+    if(x.f&&x.f!=="חד־פעמי"&&!m.item){if(has("pro")){const l=el("label"),c=el("input");c.type="checkbox";c.checked=!!m.rec;c.onchange=()=>{m.rec=c.checked;renderThread()};l.append(c,"חיוב שבועי קבוע");op.append(l)}else op.append(lock("pro","חיוב שבועי קבוע"))}
+    const okC=c=>!c.scope||c.scope===m.item;if(has("pro")){if(CPN.some(okC)){const l=el("label"),sl=el("select");sl.setAttribute("aria-label","קופון להצעה");sl.append(Object.assign(el("option","","בלי קופון"),{value:""}),...CPN.filter(okC).map(c=>Object.assign(el("option","",c.code+" · "+c.pct+"% הנחה"+(c.scope?" על הפריט":"")),{value:c.code})));sl.value=m.code||"";
       sl.onchange=()=>{const c=CPN.find(q=>q.code===sl.value);m.code=c?c.code:"";m.cd=c?c.pct:0;renderThread()};l.append("🏷️",sl);op.append(l)}else op.append(el("small","","🏷️ אפשר ליצור קופון בלשונית ״סקירה״"))}
     else op.append(lock("pro","קופון הנחה"));
     o.append(op,el("p","pay","⏳ מחכה לאישור ולתשלום של "+fnm(ct.sc)));return o}
@@ -1368,10 +1372,10 @@ function acceptOffer(t,m,inst){const base=offBase(m),f=fee(base),tot=base+f;m.st
   push(t,{w:"sys",t:payMsg(tot,m.inst)+" · הכסף עובר ל"+fnm(t.x)+" אחרי מסירת השירות"});push(t,{w:"sys",deal:dl});push(t,{w:"sys",t:"📞 הטלפון של "+fnm(t.x)+" זמין עכשיו: "+tel(t.x)});if(chatOpen(t))pinTalent(t);fillChats();renderMe();
   reply(t,[{w:"them",t:"יש! קיבלתי את האישור 🙌 "+(m.slot?"נתראה ב"+m.slot+".":"נתאם כאן את המועד המדויק.")+" אם יש שאלה, אני כאן."}])}
 function autoAccept(t){setTimeout(()=>{const m=[...t.m].reverse().find(q=>q.w==="offer"&&q.st==="open");if(!m)return;const base=offBase(m),f=fee(base);m.st="ok";m.inst=1;t.booked=true;if(chatOpen(t))renderThread();
-  const dl={no:dealNo(),svc:ownItem.t,who:t.sc.n,slot:m.slot||"נתאם בצ׳אט",base,f,tot:base-f,paid:base+f,inst:1,date:today(),dt:new Date(),side:"talent",st:"wait",code:m.code,cd:m.cd,rec:m.rec};DEALS.unshift(dl);if(m.code){const c=CPN.find(q=>q.code===m.code);if(c)c.uses=(c.uses||0)+1}
+  const dl={no:dealNo(),svc:m.item||ownItem.t,who:t.sc.n,slot:m.slot||"נתאם בצ׳אט",base,f,tot:base-f,paid:base+f,inst:1,date:today(),dt:new Date(),side:"talent",st:"wait",code:m.code,cd:m.cd,rec:m.rec};DEALS.unshift(dl);if(m.code){const c=CPN.find(q=>q.code===m.code);if(c)c.uses=(c.uses||0)+1}
   push(t,{w:"sys",t:fnm(t.sc)+" "+gv(t.sc,"אישר ושילם","אישרה ושילמה")+" "+nis(base+f)+" · "+nis(base-f)+" יגיעו אליכם אחרי מסירת השירות"});push(t,{w:"sys",deal:dl});
-  if(user.tax&&user.tax.on)push(t,{w:"sys",rc:{no:"R-"+String(1000+dealN).slice(-4),to:t.sc.n,svc:ownItem.t,amt:base,date:today(),deal:dl.no}});
-  push(t,{w:"sys",t:"📞 הטלפון של "+fnm(t.sc)+" זמין עכשיו: "+ltr(t.sc.ph)});addCal(t,m);
+  if(user.tax&&user.tax.on)push(t,{w:"sys",rc:{no:"R-"+String(1000+dealN).slice(-4),to:t.sc.n,svc:m.item||ownItem.t,amt:base,date:today(),deal:dl.no}});
+  push(t,{w:"sys",t:"📞 הטלפון של "+fnm(t.sc)+" זמין עכשיו: "+ltr(t.sc.ph)});if(!m.item)addCal(t,m);
   if((user.plan||"free")==="free"&&!user.freeMonth){user.freeMonth="avail";saveUser();toast("🎁 עסקה ראשונה! קיבלתם חודש חינם בטאלנט מתקדם","להפעלה",()=>{mineTab="ov";go("mine");renderMine()})}
   renderMine();reply(t,[{w:"them",t:"מעולה, תודה! מחכה לזה 🙏"}])},4000)}
 function addCal(t,m){const sl=m.slot||(ownItem.day?ownItem.day+" 18:00":""),dt=slotDate(sl),tm=slotTime(sl);
@@ -1887,7 +1891,8 @@ async function dlReport(){const rows=[["חודש","הכנסות","עמלת טא�
 /* ---------- my talent: overview, calendar, plan ---------- */
 function renderMine(){const b=$("#mine-body");if(!b||!user||user.role!=="talent"||!ownItem)return;b.replaceChildren();const x=ownItem,pl=user.plan||"free";x.plan=pl;x.business=!!user.business;
   const pr=el("div","prof"),pt=el("div");pt.append(el("h2","",user.name),el("p","",x.c+" · "+user.city),el("span","tag",PLANS[pl]));if(pl==="pro")pt.append(" ",el("span","tag top","🏅 כישרון מוביל"));if(user.business)pt.append(" ",el("span","tag biz","טאלנט ביזנס"));pr.append(meAv("lg"),pt);b.append(pr);
-  const tb=el("div","seg2 mtabs");tb.setAttribute("role","group");tb.setAttribute("aria-label","אזורים בכישרון שלי");[["ov","סקירה"],["plan","מסלול"]].forEach(([k,l])=>{const t=el("button","",l);t.type="button";t.setAttribute("aria-pressed",mineTab===k);t.onclick=()=>{mineTab=k;renderMine()};tb.append(t)});b.append(tb);
+  const tb=el("div","seg2 mtabs");tb.setAttribute("role","group");tb.setAttribute("aria-label","אזורים בכישרון שלי");const tabs=[["ov","סקירה"],...(has("adv")?[["cal","יומן"]]:[]),["plan","מסלול"]];tb.style.gridTemplateColumns="repeat("+tabs.length+",1fr)";
+  tabs.forEach(([k,l])=>{const t=el("button","",l);t.type="button";t.setAttribute("aria-pressed",mineTab===k);t.onclick=()=>{if(k==="cal"){openCalendar();return}mineTab=k;renderMine()};tb.append(t)});b.append(tb);
   if(mineTab==="plan")minePlan(b);else mineOv(b);
   b.append(el("p","note",FEETXT+" העמלה נגבית בכל המסלולים, והיא לא חלק מהמנוי."))}
 function mineOv(b){const x=ownItem,demo=user.demo,deals=CL.filter(t=>t.booked).length;
@@ -1950,7 +1955,7 @@ function shopTile(x,it,onclick){const b=el("button","si");b.type="button";b.setA
 /* a catalog item: the scout can open a chat about it, with the item card already at the top */
 function openItem(x,it){sheet(it.n,(it.k==="שובר"?"שובר לקנייה":"מוצר")+" · מהחנות של "+x.n,b=>{const h=el("div","ihero");h.append(itemArt(it,x));const pr=el("p","iprice",nis(it.p));
   b.append(h,pr,el("p","hint",it.k==="שובר"?"שובר לקנייה באפליקציה. אחרי התשלום הוא מופיע אצלכם באישור העסקה.":"מוצר מהקטלוג. משלוח או איסוף מתאמים בצ׳אט."));
-  if(x.own){const rm=el("button","btn ghost","הסרה מהקטלוג");rm.style.cssText="width:100%;margin-top:1rem";rm.onclick=()=>{const l=user.shop,k=l.indexOf(it);if(k>=0)l.splice(k,1);saveUser();$("#gxs").close();renderMine();toast("הפריט הוסר")};b.append(rm)}
+  if(x.own){if(has("pro")){const cb=el("button","btn soft","🏷️ קופון לפריט הזה");cb.style.cssText="width:100%;margin-top:1rem";cb.onclick=()=>{$("#gxs").close();openAddCoupon(it.n)};b.append(cb)}const rm=el("button","btn ghost","הסרה מהקטלוג");rm.style.cssText="width:100%;margin-top:.5rem";rm.onclick=()=>{const l=user.shop,k=l.indexOf(it);if(k>=0)l.splice(k,1);saveUser();$("#gxs").close();renderMine();toast("הפריט הוסר")};b.append(rm)}
   else{const go2=el("button","btn","שליחת הודעה על הפריט");go2.style.cssText="width:100%;margin-top:1rem;min-height:50px";go2.onclick=()=>{closeAll();openChat(x,{item:it})};b.append(go2)}})}
 /* adding to the catalog: name, price and a picture are required */
 function openAddItem(){const x=ownItem,lim=has("pro")?Infinity:5;if(!has("adv")){openUpgrade("adv");return}if((user.shop||[]).length>=lim){openUpgrade("pro");return}
@@ -1966,13 +1971,13 @@ function openAddItem(){const x=ownItem,lim=has("pro")?Infinity:5;if(!has("adv"))
     f.onsubmit=e=>{e.preventDefault();const nm=n.value.trim(),pr=+p.value;er.textContent=!nm?"מה שם הפריט?":!(pr>=50)?"המחיר המינימלי בטאלנט הוא ₪50":!img?"צריך תמונה של הפריט":"";if(er.textContent)return;
       (user.shop||(user.shop=[])).push({e:x.e,n:nm,p:pr,k,img});saveUser();d.close();renderMine();toast("„"+nm+"” נוסף לקטלוג")}})}
 /* coupons: one product from the catalog or the whole store, a percentage and a code */
-function openAddCoupon(){if(!has("pro")){openUpgrade("pro");return}
+function openAddCoupon(pre){if(!has("pro")){openUpgrade("pro");return}
   screen("קופון חדש","הנחה באחוזים מהתשלום",(b,d)=>{const f=el("form","form");f.noValidate=true;
-    const l0=el("label","","על מה הקופון?"),sc=el("select");sc.id="cp-s";l0.htmlFor="cp-s";sc.append(Object.assign(el("option","","כל הקניות בחנות"),{value:""}),...(user.shop||[]).map(it=>Object.assign(el("option","",it.n+" · "+nis(it.p)),{value:it.n})));
+    const l0=el("label","","על מה הקופון?"),sc=el("select");sc.id="cp-s";l0.htmlFor="cp-s";sc.append(Object.assign(el("option","","כל הקניות בחנות"),{value:""}),...(user.shop||[]).map(it=>Object.assign(el("option","",it.n+" · "+nis(it.p)),{value:it.n})));if(typeof pre==="string")sc.value=pre;
     const l1=el("label","","אחוז ההנחה"),pc=el("input");pc.id="cp-p";l1.htmlFor="cp-p";pc.type="number";pc.inputMode="numeric";pc.min="5";pc.max="50";pc.placeholder="5 עד 50";
     const l2=el("label","","קוד הקופון"),cd=el("input");cd.id="cp-c";l2.htmlFor="cp-c";cd.dir="ltr";cd.autocomplete="off";cd.placeholder="CHANUKA";cd.style.textTransform="uppercase";
     const er=el("p","err");er.setAttribute("role","alert");const sv=el("button","btn","יצירת הקופון");sv.type="submit";sv.style.cssText="width:100%;margin-top:1rem;min-height:50px";
-    f.append(l0,sc,l1,pc,l2,cd,el("p","hint","סקאוט מזין את הקוד, או שאתם בוחרים אותו בכרטיס ההצעה בצ׳אט. ההנחה מופיעה בכרטיס לפני התשלום."),er,sv);b.append(f);
+    f.append(l0,sc,l1,pc,l2,cd,el("p","hint","בכרטיס ההצעה בצ׳אט בוחרים על מה ההצעה (השירות או פריט מהקטלוג), ואז את הקופון. קופון של פריט מופיע רק בהצעה על אותו פריט. ההנחה מופיעה לסקאוט לפני התשלום."),er,sv);b.append(f);
     f.onsubmit=e=>{e.preventDefault();const code=cd.value.trim().toUpperCase().replace(/\s/g,""),pct=+pc.value;er.textContent=!(pct>=5&&pct<=50)?"הנחה בין 5% ל־50%":!/^[A-Z0-9]{3,16}$/.test(code)?"קוד באנגלית או ספרות, 3 עד 16 תווים":CPN.some(c=>c.code===code)?"כבר יש קופון בשם הזה":"";if(er.textContent)return;
       CPN.push({code,pct,scope:sc.value,uses:0});d.close();renderMine();toast("הקופון "+code+" פעיל")}})}
 const cpnScope=c=>c.scope?"על „"+c.scope+"”":"על כל הקניות בחנות";
@@ -2085,19 +2090,22 @@ function anaData(){const x=ownItem,demo=user.demo,shop=user.shop||[],D2=dealsOf(
   const sales={};D2.forEach(d=>sales[d.svc]=(sales[d.svc]||0)+1);if(!Object.keys(sales).length)sales[x.t]=0;
   const prod=Object.entries(sales).map(([n,v])=>({n,v})).sort((a,b)=>b.v-a.v).slice(0,5),cat=prod.filter(p=>shop.some(s=>s.n===p.n));
   const views=demo?214:12,pviews=demo?236:0,saves=demo?9:0,inq=demo?23:CL.length,unans=CL.filter(t=>t.m.length&&t.m[t.m.length-1].w==="them").length;
-  const rv=reviewsOf(x),low=rv.list.filter(r=>r.s<=3&&r.ago<30);
-  return{weeks:wl,prod,cat,views,pviews,saves,inq,unans,low,hours:[["8–10",2],["10–12",3],["12–14",2],["14–16",4],["16–18",9],["18–20",14],["20–22",6]].map(([l,v])=>({l,v:demo?v:0})),cpn:CPN.reduce((a,c)=>a+(c.uses||0),0)+D2.filter(d=>d.code).length}}
+  const rv=reviewsOf(x),low=rv.list.filter(r=>r.s<=3&&r.ago<30),since=addD(now,-30),rec=n=>D2.filter(d=>d.svc===n&&(!d.dt||d.dt>=since)).length;
+  const slowL=shop.map(it=>({n:it.n,v:rec(it.n),cp:(CPN.find(c=>c.scope===it.n)||{}).code})).sort((a,b)=>a.v-b.v),slow=slowL.length>1||(slowL[0]&&slowL[0].v<3)?slowL[0]:null;
+  return{slow,slowL,weeks:wl,prod,cat,views,pviews,saves,inq,unans,low,hours:[["8–10",2],["10–12",3],["12–14",2],["14–16",4],["16–18",9],["18–20",14],["20–22",6]].map(([l,v])=>({l,v:demo?v:0})),cpn:CPN.reduce((a,c)=>a+(c.uses||0),0)+D2.filter(d=>d.code).length}}
 function openAnalytics(){screen("אנליטיקס","הכנסות, חשיפה ומכירות",b=>{if(!has("pro")){const k=el("div","box flat");k.append(el("h3","","📊 אנליטיקס"),el("p","","הפריט הנמכר ביותר, הכנסות לאורך זמן, המרה, קופונים ושעות שיא."),lock("pro","אנליטיקס מלא"));b.append(k);return}
   const A=anaData(),w=A.weeks,last=w[w.length-1].v,prev=w[w.length-2].v,ch=prev?Math.round((last-prev)/prev*100):0;
   /* needs attention first: it is what the talent acts on */
   const at=el("div","box flat attn");at.append(el("h3","","⚠️ דורש תשומת לב"));const add=(t,btn,fn)=>{const p=el("div","ai");p.append(el("span","",t));if(btn){const x2=el("button","btn soft mini",btn);x2.onclick=fn;p.append(x2)}at.append(p)};
   if(ch<0)add("המכירות ירדו ב־"+Math.abs(ch)+"% השבוע, לעומת השבוע שעבר.","קופון",openAddCoupon);
   if(A.low.length)add((A.low.length>1?A.low.length+" ביקורות":"ביקורת אחת")+" של 3 כוכבים ומטה בחודש האחרון.","לביקורות",()=>openReviews(ownItem));
+  if(A.slow)add("„"+A.slow.n+"” נמכר רק "+(A.slow.v===1?"פעם אחת":A.slow.v?A.slow.v+" פעמים":"0 פעמים")+" ב־30 הימים האחרונים"+(A.slow.cp?" (יש לו קופון "+A.slow.cp+")":"")+".",A.slow.cp?"":"קופון לפריט",()=>openAddCoupon(A.slow.n));
   if(A.unans)add(A.unans>1?A.unans+" פניות מסקאוטים שעוד לא קיבלו תשובה.":"פנייה אחת מסקאוט שעוד לא קיבלה תשובה.","לצ׳אטים",()=>{closeAll();ck="sc";go("chats");fillChats()});
   if(at.children.length===1)at.append(el("p","","✓ הכול נראה טוב השבוע."));b.append(at);
   const best=A.cat[0];const bs=el("div","box flat");bs.append(el("h3","","🏆 הפריט הנמכר ביותר בקטלוג"),el("p","",best?best.n+" · "+best.v+" מכירות":"עוד אין מכירות מהקטלוג. הוסיפו פריט ושתפו אותו בסטורי."));b.append(bs);
   const lc=el("div","box flat");lc.append(el("h3","","הכנסות לפי שבוע"),el("p","",ch?(ch>0?"עלייה של "+ch+"%":"ירידה של "+Math.abs(ch)+"%")+" לעומת השבוע הקודם":"12 השבועות האחרונים"),lineChart(w,"הכנסות שבועיות ב־12 השבועות האחרונים, השבוע "+nis(last)),chartTable(w.map(d=>[d.l,nis(d.v)]),["שבוע","הכנסות"]));b.append(lc);
-  const pc=el("div","box flat");pc.append(el("h3","","מכירות לפי מוצר"),pieChart(A.prod,"חלוקת מכירות לפי מוצר"));b.append(pc);
+  const pc=el("div","box flat");pc.append(el("h3","","מכירות לפי מוצר"),pieChart(A.prod,"חלוקת מכירות לפי מוצר"));
+  if(A.slowL.length){pc.append(el("p","","ב־30 הימים האחרונים, מהקטלוג:"));A.slowL.forEach(r=>{const row=el("div","cpl"),tx=el("div","tx");tx.append(el("span","",r.n),el("small","",(r.v===1?"מכירה אחת":r.v+" מכירות")+(r.cp?" · קופון "+r.cp:"")));row.append(tx);if(!r.cp){const c=el("button","btn soft mini","קופון");c.setAttribute("aria-label","קופון ל"+r.n);c.onclick=()=>openAddCoupon(r.n);row.append(c)}pc.append(row)})}b.append(pc);
   const vs=el("div","box flat"),ms=el("div","mini-stats");[[A.views,"צפיות השבוע"],[A.saves,"שמירות"],[A.inq,"פניות"],[(A.views?Math.round(A.inq/A.views*1000)/10:0)+"%","המרה מצפייה לפנייה"]].forEach(([n,l])=>{const d=el("div");d.append(el("b","",n),el("span","",l));ms.append(d)});
   vs.append(el("h3","","צפיות, שמירות והמרה"),ms,el("p","",A.pviews?"בשבוע שעבר: "+A.pviews+" צפיות.":""));b.append(vs);
   const cu=el("div","box flat");cu.append(el("h3","","🏷️ שימוש בקופונים"),el("p","",A.cpn?(A.cpn>1?A.cpn+" עסקאות נסגרו":"עסקה אחת נסגרה")+" עם קופון.":"עוד לא נעשה שימוש בקופונים."));CPN.forEach(c=>cu.append(el("p","",c.code+" · "+c.pct+"% · "+(c.uses||0)+" שימושים")));b.append(cu);
