@@ -1834,9 +1834,9 @@ function drawMap(){const s=$("#svg");s.setAttribute("viewBox",[vb.x,vb.y,vb.w,vb
     l.forEach(x=>{const b=el("button","mi"),th=el("div","th");th.append(art(x));const tx=el("div","tx");tx.append(el("b","",x.t),el("small","",x.n+" · "+x.loc+" · "+rt(x)),el("small","","החל מ־"+nis(x.p)));b.append(th,tx);b.onclick=()=>openDet(x);rw.append(b)});c.append(rw)}
   else if(userLoc){const n=shown().filter(x=>distKm(x)<=25).length;c.append(el("div","hint",n+" שירותים עד 25 ק״מ מכם"+(userLoc.approx?" (מיקום משוער)":"")+". צבטו להגדלה, גררו להזזה."))}
   else c.append(el("div","hint",shown().length+" שירותים ב־"+Object.keys(by).length+" מקומות. צבטו להגדלה, ולחצו על סיכה."))}
-/* touch: one finger drags the map at any zoom; two fingers pinch.
-   As the owner asked: fingers moving together zooms IN, apart zooms OUT (flip PINCH_IN_ON_CLOSE to swap) */
-const PINCH_IN_ON_CLOSE=true;
+/* touch: one finger drags the map at any zoom; two fingers pinch like iPhone maps:
+   fingers apart zooms in, together zooms out (PINCH_IN_ON_CLOSE=true would swap it) */
+const PINCH_IN_ON_CLOSE=false;
 (function(){const s=$("#svg");let moved=false,raf=0,zf=1,zc=null,last=null,pd=0,pm=null;
   const setVB=()=>s.setAttribute("viewBox",[vb.x,vb.y,vb.w,vb.h].join(" "));
   const pan=(dx,dy)=>{const a=s.getScreenCTM().a;vb.x-=dx/a;vb.y-=dy/a;clampVB();setVB()};
