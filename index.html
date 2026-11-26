@@ -647,6 +647,23 @@ dialog.scr .ce{background:var(--card)}
 .mctl .mme{width:auto;padding:0 .75rem;font-size:.85rem;font-weight:500;gap:.3rem;display:flex;align-items:center}
 .mctl .mme svg{width:18px;height:18px}
 </style>
+<style id="r10b">
+/* sub-screens slide in from the side (RTL: forward comes from the left) */
+@media (prefers-reduced-motion:no-preference){dialog.scr[open],dialog.trl[open]{animation:scrIn .3s cubic-bezier(.2,.8,.2,1)}@keyframes scrIn{from{transform:translateX(-100%)}}}
+dialog.scr,dialog.trl{will-change:transform}
+dialog.trl{background:#000;color:#fff;padding:0}
+dialog.trl::backdrop{background:rgba(0,0,0,.35)}
+.trl .reels{flex:1;height:100%}
+.trl .thead{position:absolute;z-index:5;top:calc(10px + env(safe-area-inset-top,0px));right:12px;left:12px;display:flex;align-items:center;gap:.6rem;pointer-events:none}
+.trl .thead>*{pointer-events:auto}
+.trl .thead .rback{min-height:44px;display:flex;align-items:center;gap:.3rem;border:0;border-radius:999px;padding:0 .9rem;background:rgba(0,0,0,.35);color:#fff;font:inherit;font-weight:500}
+.trl .thead .rback svg{stroke:#fff}
+.trl .thead b{font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.trl .thint{position:absolute;z-index:5;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));text-align:center;font-size:.78rem;opacity:.75;pointer-events:none}
+.trl .reel .cap{bottom:calc(46px + env(safe-area-inset-bottom,0px))}.trl .rrail{bottom:calc(52px + env(safe-area-inset-bottom,0px))}
+#rfeed{will-change:transform}
+.rswipe{position:absolute;z-index:6;top:50%;translate:0 -50%;padding:.5rem .9rem;border-radius:999px;background:rgba(0,0,0,.45);color:#fff;font-weight:700;pointer-events:none;opacity:0;transition:opacity .15s}
+</style>
 <style id="iphone-fix">
 /* iPhone fixes (v9.1) */
 html{padding:0!important;height:100%;overflow:hidden;overscroll-behavior:none}
@@ -1203,7 +1220,7 @@ function showRv(){$("#d-st").textContent="★ "+cur.st.toFixed(1)+" · "+cur.rc+
 function openDet(x){cur=x;const a=$("#d-art");const sh=el("button","heart sh");sh.innerHTML=svg("share");sh.setAttribute("aria-label","שיתוף");sh.onclick=()=>openShare(x);a.replaceChildren(art(x),heartBtn(x),bmBtn(x),sh);
   const tg=$("#d-tags");tg.replaceChildren(el("span","tag",(CE[x.c]||"")+" "+x.c),el("span","tag","📍 "+x.loc));if(sched(x))tg.append(el("span","tag",sched(x)));if(x.plan==="pro")tg.append(el("span","tag top","🏅 כישרון מוביל"));if(x.business)tg.append(el("span","tag biz","טאלנט ביזנס"));
   const shp=$("#d-shop");shp.replaceChildren();const sl=x.own?(has("adv")?user.shop||[]:[]):(x.shop||[]);if(sl.length){shp.append(el("h3","","קטלוג החנות"),el("p","hint","לחצו על פריט כדי לשלוח הודעה עליו."));const g=el("div","shop");sl.forEach(it=>g.append(shopTile(x,it,()=>openItem(x,it))));shp.append(g)}
-  const rb=el("button","rbtn");rb.type="button";rb.innerHTML=svg("play",18);rb.append("רילס");rb.setAttribute("aria-label","הרילס של "+x.n+". אפשר גם להחליק שמאלה");rb.onclick=()=>openTalentReels(x);a.append(rb);
+  const rb=el("button","rbtn");rb.type="button";rb.innerHTML=svg("play",18);rb.append("רילס");rb.setAttribute("aria-label","הרילס של "+x.n+". אפשר גם להחליק ימינה");rb.onclick=()=>openTalentReels(x);a.append(rb);
   $("#d-rep").hidden=!!x.own;const dealOk=!x.own&&TH.has(x)&&TH.get(x).booked;$("#d-rev").hidden=!!x.own;$("#d-rev").disabled=!dealOk;$("#d-rev").setAttribute("aria-describedby","d-revh");$("#d-revh").hidden=dealOk||!!x.own;
   $("#d-t").textContent=x.t;$("#d-av").replaceWith(Object.assign(avatar(x.n,x.g+2),{id:"d-av"}));$("#d-who").textContent=x.n;$("#d-resp").textContent=x.resp||"חדש בטאלנט";
   const f=$("#d-facts");f.replaceChildren();[[x.st?rt(x):"חדש","דירוג"],[x.dur||"גמיש","משך"],[x.rc?Math.round(x.rc*1.4)+"":"0","עסקאות"]].forEach(k=>{const d=el("div","fact");d.append(el("b","",k[0]),el("span","",k[1]));f.append(d)});
@@ -1212,9 +1229,11 @@ function openDet(x){cur=x;const a=$("#d-art");const sh=el("button","heart sh");s
   $("#det").showModal();$("#det .sbody").scrollTop=0}
 $("#d-x").onclick=()=>$("#det").close();
 $("#d-st").onclick=()=>{if(cur&&cur.rc)openReviews(cur)};
-/* swipe left on the details: that talent's reels */
-(function(){const d=$("#det");let x0=0,y0=0,on=false;d.addEventListener("touchstart",e=>{if(e.target.closest("input,textarea,select,.shop,.rail"))return;on=true;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
-  d.addEventListener("touchend",e=>{if(!on)return;on=false;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;if(dx<-70&&Math.abs(dx)>Math.abs(dy)*1.5&&cur)openTalentReels(cur)})})();
+/* swipe right on the details: that talent's reels slide in from the left with the finger */
+(function(){const det=$("#det");let L=null;
+  swipeX(det,{skip:"input,textarea,select,.shop,.rail,.d-hero .heart",start:dx=>{if(dx<=0||!cur)return false;L=talentLayer(cur);L.style.animation="none";L.style.transition="none";L.style.transform="translateX(-100%)";L.showModal();return true},
+    move:dx=>{if(L){L.style.transition="none";L.style.transform="translateX(calc(-100% + "+Math.max(0,dx)+"px))"}},
+    end:(dx,v)=>{if(!L)return;const l=L;L=null;if(dx>innerWidth*.28||v>.5)slide(l,"translateX(0)");else slide(l,"translateX(-100%)",200,()=>l.close())}})})();
 $("#d-rev").onclick=()=>{if(!(TH.has(cur)&&TH.get(cur).booked)){toast("ביקורת אפשר לכתוב אחרי עסקה ששולמה באפליקציה");return}$("#rvf").hidden=false;$("#r-t").focus()};
 $("#d-rep").onclick=()=>openReport("הכישרון "+cur.n);
 $("#r-go").onclick=()=>{if(!$("#r-t").value.trim())return;const s=+$("#r-s").value;cur.st=Math.round(((cur.st||0)*cur.rc+s)/(cur.rc+1)*10)/10;cur.rc++;cur.rv.unshift(["אתם",s,$("#r-t").value,"עכשיו",user&&user.partner?1:0]);$("#r-t").value="";$("#rvf").hidden=true;showRv();paint();toast("הביקורת פורסמה")};
@@ -1469,29 +1488,44 @@ const RCAP=["ככה זה נראה מקרוב ✨","מאחורי הקלעים ש�
 function reelsFor(x){let l=RL.filter(r=>rx(r)===x);for(let k=l.length;k<3;k++){const r=[x,(STO.find(s=>s.x===x)||{f:[{c:""}]}).f[k%1]?.c&&k===1?STO.find(s=>s.x===x).f[0].c:RCAP[(x.i+k)%RCAP.length]+" · "+x.t,300+((x.i*37+k*91)%900),8+((x.i+k*5)%30)];r.syn=true;RL.push(r);CM.push([]);l.push(r)}return l}
 function reelList(){if(reelMode==="talent"&&reelX)return reelsFor(reelX);if(reelMode==="fav"){const l=[];[...favs].forEach(x=>{const own=RL.filter(r=>rx(r)===x&&!r.syn);(own.length?own:reelsFor(x).slice(0,1)).forEach(r=>l.push(r))});return l}return RL.filter(r=>!r.syn)}
 function setReelMode(m,x){reelMode=m;reelX=x||null;$("#app").dataset.rmode=m;buildReels();$("#rfeed").scrollTop=0;observeReels()}
-function openTalentReels(x){reelBack={view:$("#app").dataset.view==="reels"?"home":$("#app").dataset.view,x};closeAll();setReelMode("talent",x);go("reels")}
+function talentLayer(x){const d=document.createElement("dialog");d.className="full trl";d.setAttribute("aria-label","הרילס של "+x.n);
+  const f=el("div","reels"),hd=el("div","thead"),bk=el("button","rback");bk.type="button";bk.innerHTML=svg("back",18);bk.append("לפרטים");bk.setAttribute("aria-label","חזרה לפרטים של "+x.n);
+  const out=()=>slide(d,"translateX(-100%)",220,()=>d.close());bk.onclick=out;hd.append(bk,el("b","","הרילס של "+fnm(x)));
+  const ctx={toDet:()=>{out();if(!$("#det").open)setTimeout(()=>openDet(x),230)}};reelsFor(x).forEach(r=>f.append(reelEl(r,ctx)));
+  d.append(f,hd,el("div","thint","החליקו שמאלה לפרטים · משכו למטה ליציאה"));document.body.append(d);d.addEventListener("close",()=>d.remove());d.addEventListener("cancel",e=>{e.preventDefault();out()});
+  const io=new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle("play",e.isIntersecting)),{root:f,threshold:.6});f.querySelectorAll(".reel").forEach(r=>io.observe(r));
+  /* left: back to the details · down from the first reel: out to wherever the profile was opened from */
+  swipeX(d,{skip:".rrail,.cap button,.thead",start:dx=>dx<0,move:dx=>{d.style.transition="none";d.style.transform="translateX("+Math.min(0,dx)+"px)"},end:(dx,v)=>{if(dx<-innerWidth*.28||v<-.5)out();else slide(d,"")},
+    down:{start:()=>f.scrollTop<=2,move:dy=>{d.style.transition="none";d.style.transform="translateY("+Math.max(0,dy)+"px) scale("+Math.max(.86,1-dy/1400)+")";d.style.opacity=String(Math.max(.4,1-dy/600))},
+      end:(dy,v)=>{if(dy>120||v>.6){slide(d,"translateY(100%)",200,()=>{d.close();if($("#det").open)$("#det").close()})}else{slide(d,"");d.style.opacity=""}}}});
+  return d}
+function openTalentReels(x){const d=talentLayer(x);d.showModal()}
 function reelHead(){const lbl=el("div","lbl");
   if(reelMode==="talent"){const bk=el("button","rback");bk.type="button";bk.innerHTML=svg("back",18);bk.append("חזרה");bk.setAttribute("aria-label","חזרה מהרילס של "+reelX.n);bk.onclick=()=>{const rb=reelBack;setReelMode("all");if(rb){go(rb.view);openDet(rb.x)}else go("home")};lbl.append(bk,el("b","","הרילס של "+fnm(reelX)));return lbl}
   [["all","בשבילכם"],["fav","מועדפים"]].forEach(([k,t])=>{const b=el("button","",t);b.type="button";b.setAttribute("aria-pressed",reelMode===k);b.onclick=()=>setReelMode(k);lbl.append(b)});return lbl}
 function buildReels(){const f=$("#rfeed");f.replaceChildren();const L=reelList();
-  if(!L.length){const s=el("article","reel");const e=el("div","rempty");e.append(el("b","",reelMode==="fav"?"עוד אין רילס של מועדפים":"אין רילס להצגה"),el("p","",reelMode==="fav"?"שמרו כישרונות למועדפים, והרילס שלהם יופיעו כאן.":""));const bk=el("button","btn soft","לכל הרילס");bk.onclick=()=>setReelMode("all");e.append(bk);s.append(e,reelHead());f.append(s);return}
-  L.forEach(r=>{const k=RL.indexOf(r),x=rx(r),s=el("article","reel");s.setAttribute("aria-label","רילס של "+x.n);
+  f.style.transform="";if(!L.length){const s=el("article","reel");const e=el("div","rempty");e.append(el("b","",reelMode==="fav"?"עוד אין רילס של מועדפים":"אין רילס להצגה"),el("p","",reelMode==="fav"?"שמרו כישרונות למועדפים, והרילס שלהם יופיעו כאן.":""));const bk=el("button","btn soft","לכל הרילס");bk.onclick=()=>setReelMode("all");e.append(bk);s.append(e,reelHead());f.append(s);return}
+  L.forEach(r=>f.append(reelEl(r)))}
+function reelEl(r,ctx){{const k=RL.indexOf(r),x=rx(r),s=el("article","reel");s.setAttribute("aria-label","רילס של "+x.n);
   const bg=el("div","bg");bg.style.backgroundImage="linear-gradient(160deg,"+G[x.g][1]+","+G[(x.g+1)%6][1]+" 45%,"+G[(x.g+3)%6][1]+")";bg.append(el("span","e",x.e));if(r[4]){bg.replaceChildren();const mv=el(r[5]?"video":"img");mv.src=r[4];mv.style.cssText="position:absolute;inset:0;width:100%;height:100%;object-fit:cover";if(r[5]){mv.muted=mv.autoplay=mv.loop=mv.playsInline=true}else mv.alt="";bg.append(mv)}
-  const bar=el("div","bar");bar.append(el("i"));const lbl=reelHead();
+  const bar=el("div","bar");bar.append(el("i"));const lbl=ctx?el("span"):reelHead();
   const cap=el("div","cap"),who=el("div","who"),fo=el("button","follow",favs.has(x)?"✓ במועדפים":"＋ מועדפים");fo.dataset.fav=x.i;fo.setAttribute("aria-pressed",favs.has(x));fo.onclick=()=>{fav(x);fo.textContent=favs.has(x)?"✓ במועדפים":"＋ מועדפים"};
   who.append(avatar(x.n,x.g+2,"sm"),el("b","",x.n));if(!x.own)who.append(fo);const pl=el("div","pills");pl.append(el("span","","📍 "+x.loc),el("span","",rt(x)),el("span","",x.t));
-  const cta=el("button","btn cta","הזמינו מ־"+nis(x.p));cta.onclick=()=>openDet(x);cap.append(who,el("p","",r[1]),pl,cta);
+  const cta=el("button","btn cta","הזמינו מ־"+nis(x.p));cta.onclick=()=>ctx?ctx.toDet():openDet(x);cap.append(who,el("p","",r[1]),pl,cta);
   const rail=el("div","rrail"),mk=(ic,txt,lab,fn)=>{const b=el("button");b.innerHTML=svg(ic);b.append(txt);b.setAttribute("aria-label",lab);b.onclick=fn;return b};
   const lk=mk("heart",fk(r[2]),"אהבתי",()=>like(x));lk.dataset.like=x.i;lk.setAttribute("aria-pressed",liked.has(x));
   const cm=mk("chat",fk(r[3]),"תגובות",()=>openComments(k));cm.dataset.cm=k;
   const bm=mk("book","שמירה","שמירה למועדפים",()=>fav(x));bm.dataset.fav=x.i;bm.setAttribute("aria-pressed",favs.has(x));
   rail.append(lk,cm,bm,mk("share","שיתוף","שיתוף",()=>openShare(x)));if(!x.own)rail.append(mk("flag","דיווח","דיווח על הרילס",()=>openReport("רילס של "+x.n)));
   s.ondblclick=e=>{if(e.target.closest("button"))return;if(!liked.has(x))like(x);const h=el("div","burst","♥");s.append(h);setTimeout(()=>h.remove(),800)};
-  s.append(bg,el("div","shade"),bar,lbl,cap,rail);f.append(s)})}
-/* swipe left: favorites only; swipe right: back to "for you" (or out of one talent's reels) */
-(function(){const f=$("#rfeed");let x0=0,y0=0,on=false;f.addEventListener("touchstart",e=>{on=true;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
-  f.addEventListener("touchend",e=>{if(!on)return;on=false;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.5)return;
-    if(dx<0&&reelMode==="all"){setReelMode("fav");toast("מועדפים: רילס רק של מי ששמרתם")}else if(dx>0&&reelMode==="fav")setReelMode("all");else if(dx>0&&reelMode==="talent")f.querySelector(".rback")?.click()})})();
+  s.append(bg,el("div","shade"),bar,lbl,cap,rail);return s}}
+/* swipe right: favorites; swipe left: back to "for you". The feed follows the finger and the next list slides in */
+(function(){const f=$("#rfeed"),W=()=>f.clientWidth||innerWidth;
+  swipeX(f,{skip:".rrail,.cap button,.lbl",start:()=>true,
+    move:dx=>{const ok=(dx>0&&reelMode==="all")||(dx<0&&reelMode==="fav");f.style.transition="none";f.style.transform="translateX("+(ok?dx:dx*.22)+"px)"},
+    end:(dx,v)=>{const ok=(dx>0&&reelMode==="all")||(dx<0&&reelMode==="fav");
+      if(ok&&(Math.abs(dx)>W()*.25||Math.abs(v)>.5)){const sg=dx>0?1:-1;slide(f,"translateX("+sg*W()+"px)",180,()=>{setReelMode(reelMode==="all"?"fav":"all");f.style.transition="none";f.style.transform="translateX("+(-sg*W())+"px)";requestAnimationFrame(()=>requestAnimationFrame(()=>slide(f,"")))})}
+      else slide(f,"")}})})();
 function observeReels(){if(!ro)ro=new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle("play",e.isIntersecting&&$("#app").dataset.view==="reels")),{threshold:.6});
   document.querySelectorAll(".reel").forEach(r=>{ro.unobserve(r);ro.observe(r)})}
 
@@ -1763,7 +1797,8 @@ $("#ls-x").onclick=()=>$("#locs").close();
 const VB0={x:-10,y:0,w:240,h:470};let vb={...VB0};
 function clampVB(){vb.x=Math.min(Math.max(vb.x,VB0.x-vb.w*.3),VB0.x+VB0.w-vb.w*.7);vb.y=Math.min(Math.max(vb.y,VB0.y-vb.h*.3),VB0.y+VB0.h-vb.h*.7)}
 function svgPt(cx,cy){const s=$("#svg"),p=s.createSVGPoint();p.x=cx;p.y=cy;return p.matrixTransform(s.getScreenCTM().inverse())}
-function zoomAt(f,pt){const nw=Math.min(VB0.w,Math.max(VB0.w/12,vb.w*f)),r=nw/vb.w;vb.x=pt.x-(pt.x-vb.x)*r;vb.y=pt.y-(pt.y-vb.y)*r;vb.w=nw;vb.h=VB0.h*nw/VB0.w;clampVB();drawMap()}
+function zoomVB(f,pt){const nw=Math.min(VB0.w,Math.max(VB0.w/12,vb.w*f)),r=nw/vb.w;vb.x=pt.x-(pt.x-vb.x)*r;vb.y=pt.y-(pt.y-vb.y)*r;vb.w=nw;vb.h=VB0.h*nw/VB0.w;clampVB()}
+function zoomAt(f,pt){zoomVB(f,pt);drawMap()}
 const vbMid=()=>({x:vb.x+vb.w/2,y:vb.y+vb.h/2});
 function drawMap(){const s=$("#svg");s.setAttribute("viewBox",[vb.x,vb.y,vb.w,vb.h].join(" "));s.replaceChildren();
   const k=vb.w/VB0.w,mk=(t,a)=>{const e=document.createElementNS("http://www.w3.org/2000/svg",t);for(const q in a)e.setAttribute(q,a[q]);return e},pts=l=>l.map(p=>px(p[1])+","+py(p[0])).join(" "),lin=l=>"M"+l.map(p=>px(p[1])+","+py(p[0])).join("L");
@@ -1799,16 +1834,25 @@ function drawMap(){const s=$("#svg");s.setAttribute("viewBox",[vb.x,vb.y,vb.w,vb
     l.forEach(x=>{const b=el("button","mi"),th=el("div","th");th.append(art(x));const tx=el("div","tx");tx.append(el("b","",x.t),el("small","",x.n+" · "+x.loc+" · "+rt(x)),el("small","","החל מ־"+nis(x.p)));b.append(th,tx);b.onclick=()=>openDet(x);rw.append(b)});c.append(rw)}
   else if(userLoc){const n=shown().filter(x=>distKm(x)<=25).length;c.append(el("div","hint",n+" שירותים עד 25 ק״מ מכם"+(userLoc.approx?" (מיקום משוער)":"")+". צבטו להגדלה, גררו להזזה."))}
   else c.append(el("div","hint",shown().length+" שירותים ב־"+Object.keys(by).length+" מקומות. צבטו להגדלה, ולחצו על סיכה."))}
-/* touch: drag only moves the view box (no redraw), pinch zooms around the fingers */
-(function(){const s=$("#svg"),pts=new Map();let moved=false,pd=0,raf=0,zf=1,zc=null;
-  const pv=()=>[...pts.values()],pdist=()=>{const[a,b]=pv();return Math.hypot(a.x-b.x,a.y-b.y)},pmid=()=>{const[a,b]=pv();return{x:(a.x+b.x)/2,y:(a.y+b.y)/2}};
+/* touch: one finger drags the map at any zoom; two fingers pinch.
+   As the owner asked: fingers moving together zooms IN, apart zooms OUT (flip PINCH_IN_ON_CLOSE to swap) */
+const PINCH_IN_ON_CLOSE=true;
+(function(){const s=$("#svg");let moved=false,raf=0,zf=1,zc=null,last=null,pd=0,pm=null;
   const setVB=()=>s.setAttribute("viewBox",[vb.x,vb.y,vb.w,vb.h].join(" "));
-  s.addEventListener("pointerdown",e=>{pts.set(e.pointerId,{x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY});if(pts.size===1)moved=false;if(pts.size===2)pd=pdist()});
-  s.addEventListener("pointermove",e=>{const p=pts.get(e.pointerId);if(!p)return;
-    if(pts.size===1){if(!moved&&Math.hypot(e.clientX-p.x0,e.clientY-p.y0)<6)return;if(!moved){moved=true;try{s.setPointerCapture(e.pointerId)}catch(_){}}
-      const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;const a=s.getScreenCTM().a;vb.x-=dx/a;vb.y-=dy/a;clampVB();setVB()}
-    else if(pts.size===2){p.x=e.clientX;p.y=e.clientY;const d=pdist();if(pd&&d){const m=pmid();zf*=pd/d;zc=svgPt(m.x,m.y);if(!raf)raf=requestAnimationFrame(()=>{raf=0;zoomAt(zf,zc);zf=1})}pd=d;moved=true}});
-  const up=e=>{pts.delete(e.pointerId);if(pts.size<2)pd=0};s.addEventListener("pointerup",up);s.addEventListener("pointercancel",up);
+  const pan=(dx,dy)=>{const a=s.getScreenCTM().a;vb.x-=dx/a;vb.y-=dy/a;clampVB();setVB()};
+  /* during a gesture only the view box changes (the touched element must stay in the page); the full redraw waits for the fingers to lift */
+  let dirty=false;const zoom=(f,c)=>{zoomVB(f,c);setVB();dirty=true};
+  /* touch events (iPhone, and inside the app frame) */
+  const tp=e=>[...e.touches].map(t=>({x:t.clientX,y:t.clientY}));
+  s.addEventListener("touchstart",e=>{const p=tp(e);if(p.length===1){last=p[0];last.x0=p[0].x;last.y0=p[0].y;moved=false}if(p.length===2){pd=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);pm={x:(p[0].x+p[1].x)/2,y:(p[0].y+p[1].y)/2};moved=true}},{passive:true});
+  s.addEventListener("touchmove",e=>{if(e.cancelable)e.preventDefault();const p=tp(e);
+    if(p.length===1&&last){if(!moved&&Math.hypot(p[0].x-last.x0,p[0].y-last.y0)<6)return;moved=true;pan(p[0].x-last.x,p[0].y-last.y);last={...last,x:p[0].x,y:p[0].y}}
+    else if(p.length===2){const d=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y),m={x:(p[0].x+p[1].x)/2,y:(p[0].y+p[1].y)/2};if(pd&&d){zoom(PINCH_IN_ON_CLOSE?d/pd:pd/d,svgPt(m.x,m.y))}if(pm)pan(m.x-pm.x,m.y-pm.y);pd=d;pm=m}},{passive:false});
+  s.addEventListener("touchend",e=>{const p=tp(e);if(p.length<2){pd=0;pm=null}if(p.length===1){last={x:p[0].x,y:p[0].y,x0:-999,y0:-999}}if(!p.length){last=null;if(dirty){dirty=false;drawMap()}}},{passive:true});
+  /* mouse: drag and wheel */
+  let md=null;s.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")return;md={x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY};moved=false});
+  window.addEventListener("pointermove",e=>{if(e.pointerType!=="mouse"||!md)return;if(!moved&&Math.hypot(e.clientX-md.x0,e.clientY-md.y0)<6)return;moved=true;pan(e.clientX-md.x,e.clientY-md.y);md.x=e.clientX;md.y=e.clientY});
+  window.addEventListener("pointerup",e=>{if(e.pointerType==="mouse")md=null});
   s.addEventListener("click",e=>{if(moved){e.stopPropagation();e.preventDefault();moved=false}},true);
   s.addEventListener("wheel",e=>{e.preventDefault();zoomAt(e.deltaY>0?1.18:1/1.18,svgPt(e.clientX,e.clientY))},{passive:false});
   s.addEventListener("dblclick",e=>zoomAt(.6,svgPt(e.clientX,e.clientY)))})();
@@ -1898,7 +1942,7 @@ function renderMine(){const b=$("#mine-body");if(!b||!user||user.role!=="talent"
 function mineOv(b){const x=ownItem,demo=user.demo,deals=CL.filter(t=>t.booked).length;
   const st=el("div","stats");(demo?[["₪2,565","נטו החודש",openAnalytics],[String(dealsOf().length),"עסקאות",openDeals],["★ 4.9","32 ביקורות",()=>openReviews(ownItem)]]:[["₪"+INC()[0][1],"החודש",openAnalytics],[String(dealsOf().length),"עסקאות",openDeals],[x.rc?"★ "+x.st.toFixed(1):"חדש",x.rc?x.rc+" ביקורות":"עוד אין ביקורות",()=>openReviews(ownItem)]]).forEach(([v,l,fn])=>{const d=el("button","stat");d.type="button";d.append(el("b","",v),el("span","",l));d.onclick=fn;st.append(d)});b.append(st);
   const qt=el("div","qtiles");[["📅","יומן",has("adv")?CAL.filter(e=>!e.dt||e.dt>=iso(new Date())).length+" קרובים":"🔒 מתקדם",openCalendar],["🧾","הזמנות",has("adv")?"קרובות וממתינות":"🔒 מתקדם",openOrders],["📊","אנליטיקס",has("pro")?"הכנסות ומכירות":"🔒 פרו",openAnalytics]].forEach(([i,n,s2,fn])=>{const t=el("button");t.type="button";t.append(el("span","",i),el("b","",n),el("small","",s2));t.onclick=fn;qt.append(t)});b.append(qt);
-  const fm=user.freeMonth;if(fm){const g=el("div","plan"+(fm==="avail"?" gift":""));g.append(el("h2","",fm==="avail"?"🎁 קיבלתם חודש חינם בטאלנט מתקדם":"🎁 חודש חינם בטאלנט מתקדם"),el("p","",fm==="avail"?"מתנה על העסקה הראשונה שלכם: כל הכלים של טאלנט מתקדם, חודש בלי תשלום.":fm==="active"?"פעיל עכשיו, עד "+(user.fmEnd||"")+". אחר כך חוזרים לטאלנט מתחיל, אלא אם תשדרגו.":"✓ נוצל אחרי העסקה הראשונה שלכם. אפשר לשדרג בכל רגע."));
+  const fm=user.freeMonth;if(fm&&(user.plan||"free")==="free"){const g=el("div","plan"+(fm==="avail"?" gift":""));g.append(el("h2","",fm==="avail"?"🎁 קיבלתם חודש חינם בטאלנט מתקדם":"🎁 חודש חינם בטאלנט מתקדם"),el("p","",fm==="avail"?"מתנה על העסקה הראשונה שלכם: כל הכלים של טאלנט מתקדם, חודש בלי תשלום.":fm==="active"?"פעיל עכשיו, עד "+(user.fmEnd||"")+". אחר כך חוזרים לטאלנט מתחיל, אלא אם תשדרגו.":"✓ נוצל אחרי העסקה הראשונה שלכם. אפשר לשדרג בכל רגע."));
     if(fm==="avail"){const a=el("button","btn","הפעלת החודש החינמי");a.onclick=()=>{const d=new Date();d.setMonth(d.getMonth()+1);user.freeMonth="active";user.plan="adv";user.fmEnd=d.toLocaleDateString("he-IL");saveUser();planChanged();toast("טאלנט מתקדם פעיל לחודש, בחינם 🎉")};g.append(a)}b.append(g)}
   const pl=el("div","plan hot"),ph=el("div","ph");ph.append(art(x));pl.append(ph,el("h2","",x.t),el("p","",nis(x.p)+" "+(x.u||"")+" · "+x.loc+(sched(x)?" · "+sched(x):"")));
   if(has("adv")){const ms=el("div","mini-stats");(demo?[[214,"צפיות"],[37,"לייקים"],[9,"שמירות"],[12,"תגובות"]]:[[12,"צפיות"],[0,"לייקים"],[0,"שמירות"],[0,"תגובות"]]).forEach(([n,l])=>{const d=el("div");d.append(el("b","",n),el("span","",l));ms.append(d)});pl.append(el("p","","השבוע:"),ms)}else pl.append(lock("adv","נתוני צפיות ותנועה"));
@@ -1941,12 +1985,33 @@ function minePlan(b){const pl=user.plan||"free",c=el("div","plan hot");c.append(
   const t=el("div","box");t.append(el("h3","","השוואת מסלולים"),cmpTable());if(pl!=="pro"){const u=el("button","btn","שדרוג");u.style.cssText="width:100%;margin-top:.6rem";u.onclick=()=>openUpgrade();t.append(u)}else t.append(el("p","","אתם במסלול הגבוה ביותר. ניהול המנוי בהגדרות Apple ID."));
   t.append(el("p","","המנוי נרכש בתוך האפליקציה דרך App Store. אין רכישה דרך אתר."));b.append(t)}
 
+/* ---------- horizontal swipe with axis lock: follows the finger, decides on release ---------- */
+const RM=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
+function swipeX(t,o){let x0=0,y0=0,t0=0,lock="",dx=0,dy=0,on=false;
+  const st=(x,y,tg)=>{if(o.skip&&tg.closest(o.skip))return;on=true;lock="";x0=x;y0=y;t0=Date.now();dx=dy=0};
+  const mv=(x,y,ev)=>{if(!on)return;dx=x-x0;dy=y-y0;
+    if(!lock){if(Math.abs(dx)<10&&Math.abs(dy)<10)return;if(Math.abs(dx)>Math.abs(dy)*1.2){lock=o.start&&o.start(dx)===false?"no":"x"}else lock=o.down&&dy>0&&o.down.start()?"y":"no";if(lock!=="no")t._hlock=true}
+    if(lock==="x"){if(ev&&ev.cancelable)ev.preventDefault();o.move(dx)}else if(lock==="y"){if(ev&&ev.cancelable)ev.preventDefault();o.down.move(dy)}};
+  const en=()=>{if(!on)return;on=false;setTimeout(()=>t._hlock=false,30);const v=(lock==="y"?dy:dx)/Math.max(1,Date.now()-t0);if(lock==="x")o.end(dx,v);else if(lock==="y")o.down.end(dy,v)};
+  t.addEventListener("touchstart",e=>st(e.touches[0].clientX,e.touches[0].clientY,e.target),{passive:true});
+  t.addEventListener("touchmove",e=>mv(e.touches[0].clientX,e.touches[0].clientY,e),{passive:false});
+  t.addEventListener("touchend",en);t.addEventListener("touchcancel",en);
+  t.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button===0)st(e.clientX,e.clientY,e.target)});
+  window.addEventListener("pointermove",e=>{if(e.pointerType==="mouse")mv(e.clientX,e.clientY)});window.addEventListener("pointerup",e=>{if(e.pointerType==="mouse")en()});
+  t.addEventListener("click",e=>{if(t._hlock&&lock&&lock!=="no"){e.stopPropagation();e.preventDefault()}},true)}
+const slide=(n,tf,ms,fn)=>{n.style.transition=RM()?"none":"transform "+(ms||240)+"ms cubic-bezier(.2,.8,.2,1),opacity "+(ms||240)+"ms";n.style.transform=tf;setTimeout(()=>{fn&&fn()},RM()?0:(ms||240))};
+/* close a sub-screen the way it came in */
+function closeScr(d){if(!d.open)return;slide(d,"translateX(-100%)",220,()=>d.close())}
+
 /* ---------- round 10: dedicated screens (each with a back button) ---------- */
 const CHP=["#009AA3","#C98A12","#5B6FD6","#B3428F","#6E8B3D"];/* validated categorical order: identity only, coral stays for actions */
 function screen(title,sub,build){const d=document.createElement("dialog");d.className="full scr";d.setAttribute("aria-label",title);
-  const h=el("div","scr-h"),bk=el("button","icon-btn scr-back");bk.type="button";bk.innerHTML=svg("back");bk.setAttribute("aria-label","חזרה");bk.onclick=()=>d.close();
+  const h=el("div","scr-h"),bk=el("button","icon-btn scr-back");bk.type="button";bk.innerHTML=svg("back");bk.setAttribute("aria-label","חזרה");bk.onclick=()=>closeScr(d);
   const tx=el("div","tx");tx.append(el("h2","",title));if(sub)tx.append(el("small","",sub));h.append(bk,tx);
-  const body=el("div","sbody scr-b");d.append(h,body);document.body.append(d);d.addEventListener("close",()=>d.remove());d.showModal();build(body,d);return d}
+  const body=el("div","sbody scr-b");d.append(h,body);document.body.append(d);d.addEventListener("close",()=>d.remove());d.addEventListener("cancel",e=>{e.preventDefault();closeScr(d)});
+  /* swipe back: drag toward the left edge, the screen follows the finger */
+  swipeX(d,{skip:"input,select,textarea,.chart,.mgrid,.segn",start:dx=>dx<0,move:dx=>{d.style.transition="none";d.style.transform="translateX("+Math.min(0,dx)+"px)"},end:(dx,v)=>{if(dx<-innerWidth*.28||v<-.5)closeScr(d);else slide(d,"")}});
+  d.showModal();build(body,d);return d}
 const seg=(opts,val,fn,lab)=>{const g=el("div","seg2 segn");g.setAttribute("role","group");g.setAttribute("aria-label",lab);g.style.gridTemplateColumns="repeat("+opts.length+",1fr)";
   opts.forEach(([v,l])=>{const b=el("button","",l);b.type="button";b.setAttribute("aria-pressed",v===val);b.onclick=()=>fn(v);g.append(b)});return g};
 const shopItem=a=>Array.isArray(a)?{e:a[0],n:a[1],p:a[2],k:/שובר/.test(a[1])?"שובר":"מוצר"}:a;
@@ -2251,7 +2316,7 @@ function sheetSwipe(d){let y0=0,dy=0,on=false,drag=false,t0=0;
   const skip=t=>t.closest("input,textarea,select,.mrow,.rail,.chips,.quick,.socials,.ment,.emo,.seg2");
   const scroller=t=>{for(let n=t;n&&n!==d;n=n.parentElement){const o=getComputedStyle(n).overflowY;if((o==="auto"||o==="scroll")&&n.scrollHeight>n.clientHeight+1)return n}return null};
   const start=(y,t)=>{if(skip(t))return;const sc=scroller(t);if(sc&&sc.scrollTop>0)return;on=true;drag=false;y0=y;dy=0;t0=Date.now()};
-  const move=(y,ev)=>{if(!on)return;dy=y-y0;if(!drag){if(dy>8){drag=true;d.style.transition="none"}else{if(dy<-4)on=false;return}}
+  const move=(y,ev)=>{if(!on)return;if(d._hlock){on=false;d.style.transform="";return}dy=y-y0;if(!drag){if(dy>8){drag=true;d.style.transition="none"}else{if(dy<-4)on=false;return}}
     if(ev&&ev.cancelable)ev.preventDefault();d.style.transform="translateY("+Math.max(0,dy)+"px)"};
   const end=()=>{if(!on)return;on=false;if(!drag)return;setTimeout(()=>drag=false,60);const v=dy/Math.max(1,Date.now()-t0);d.style.transition="transform .22s ease";
     if(dy>110||(dy>30&&v>.6)){d.style.transform="translateY(100%)";setTimeout(()=>{d.close();d.style.transition="";d.style.transform=""},210)}
