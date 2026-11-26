@@ -562,6 +562,21 @@ dialog.ios::backdrop{background:rgba(0,0,0,.35)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.top{background:#463813;color:#ffd77a}:root:not([data-theme="light"]) .ptag{color:#6fb3ff}}
 :root[data-theme="dark"] .tag.top{background:#463813;color:#ffd77a}:root[data-theme="dark"] .ptag{color:#6fb3ff}
 </style>
+<style id="iphone-fix">
+/* iPhone fixes (v9.1) */
+html{padding:0!important;height:100%;overflow:hidden;overscroll-behavior:none}
+body{height:100%;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+#app{padding-top:env(safe-area-inset-top,0px)}
+/* iOS zooms into any field under 16px; keep fields at 16px */
+input,select,textarea,#apple .agrp input[type=text]{font-size:16px!important}
+/* sheets: one fixed frame, only the body scrolls, sits above the keyboard */
+dialog.sheet{overflow:hidden;margin-bottom:var(--kb,0px);max-height:calc(92dvh - var(--kb,0px));overscroll-behavior:contain}
+dialog.sheet>.grab,dialog.sheet>.shead,dialog.sheet>.foot{flex:none}
+dialog.sheet>.sbody{flex:1 1 auto;min-height:0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+dialog.full{overflow:hidden;padding-top:env(safe-area-inset-top,0px);overscroll-behavior:contain}
+dialog:focus{outline:none}
+#apple .agrp input[type=text]{min-width:0}
+</style>
 </head>
 <body>
 <div id="app" data-view="home">
@@ -1948,6 +1963,27 @@ put("#back","back");put("#c-rep","flag",null,20);put("#gx-x","x");put("#send-b",
 chips();paint();buildReels();markAll();
 /* demo mode: every open starts at the landing page so the whole sign-up or login can be shown; registered accounts stay saved for login */
 try{localStorage.removeItem(LS)}catch(_){}$("#gate").hidden=false;gshow("g-land",false);
+</script>
+<script id="iphone-fix-js">
+/* iPhone fixes (v9.1) */
+(function(){
+  /* 1. opening a sheet never jumps into a field (no keyboard, no zoom) and always starts at the top */
+  const sm=HTMLDialogElement.prototype.showModal;
+  HTMLDialogElement.prototype.showModal=function(){
+    sm.apply(this,arguments);
+    if(!this.hasAttribute("tabindex"))this.setAttribute("tabindex","-1");
+    const a=document.activeElement;
+    if(a&&this.contains(a)&&a!==this){try{this.focus({preventScroll:true})}catch(_){this.focus()}}
+    if(this.id==="apple"){const p=this.querySelector("#ap-body p");if(p)p.textContent=(typeof apMode!=="undefined"&&apMode==="login")?"התחברות ל־Talent עם ה־Apple ID שלך.":"יצירת חשבון ב־Talent עם ה־Apple ID שלך."}
+    this.querySelectorAll(".sbody").forEach(b=>b.scrollTop=0);
+  };
+  /* 2. keyboard: lift the open sheet above it, and undo the page shift iOS leaves behind */
+  const vv=window.visualViewport,root=document.documentElement;
+  function kb(){if(!vv)return;const f=document.activeElement;if(!f||!f.matches||!f.matches("input,textarea,select")){root.style.setProperty("--kb","0px");return}const h=Math.max(0,Math.round(innerHeight-vv.height-vv.offsetTop));root.style.setProperty("--kb",(h>80?h:0)+"px")}
+  if(vv){vv.addEventListener("resize",kb);vv.addEventListener("scroll",kb)}
+  document.addEventListener("focusout",()=>setTimeout(()=>{const a=document.activeElement;
+    if(!a||!a.matches||!a.matches("input,textarea,select")){root.style.setProperty("--kb","0px");window.scrollTo(0,0);document.body.scrollTop=0}},120));
+})();
 </script>
 </body>
 </html>
